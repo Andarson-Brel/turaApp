@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./dashboard.css" />
+
+    <title>Dashboard</title>
+  </head>
+
+  <body>
+    <div class="general-wrapper">
+      <nav class="navbar">
+        <div class="logo-cont">
+          <img src="/images/logo.svg" alt="" class="logo" />
+        </div>
+        <div class="accou-notif">
+          <img
+            src="/images/material-symbols_account-circle.svg"
+            alt=""
+            class="profile-icon"
+          />
+
+          <img
+            src="/images/basil_notification-on-solid.svg"
+            alt=""
+            class="notification-icon"
+          />
+        </div>
+      </nav>
+      <main class="main-section">
+        <section class="side-bar">
+          <div class="side-bar-nav side-nav-active side-nav">
+            <img src="/images/home.svg" alt="" />
+            <p class="nav-name">Home</p>
+          </div>
+
+          <div class="side-bar-nav side-nav">
+            <img src="/images/arrow-right.svg" alt="" />
+            <p class="nav-name">Transfer</p>
+          </div>
+          <div class="side-bar-nav side-nav">
+            <img src="/images/cash.svg" alt="" />
+            <p class="nav-name">Loan</p>
+          </div>
+          <div class="side-bar-nav">
+            <img src="/images/history.svg" alt="" />
+            <p class="nav-name">History</p>
+          </div>
+          <div class="side-bar-nav">
+            <img src="/images/account-circle.svg" alt="" />
+            <p class="nav-name">Account</p>
+          </div>
+
+          <div class="side-bar-nav logout">
+            <img src="/images/logout.svg" alt="" />
+            <p class="nav-name">Log-Out</p>
+          </div>
+        </section>
+        <section class="user-dashboard-container">
+          <!-- dashboard content goes here -->
+          <div class="user-dashboard">
+            <div class="pages">
+              <!-- WELCOME =============================MESSAGE========================== -->
+              <div class="welcome-message">
+                <div class="welcome-img-cont">
+                  <img
+                    src="/images/Ellipse -194.png"
+                    alt=""
+                    class="welcome-img"
+                  />
+                </div>
+                <div class="name-greeting">
+                  <p class="greeting">
+                    Hello, <sapn class="user-name">Innocent</sapn>
+                  </p>
+                </div>
+              </div>
+
+              <div class="transaction-history-cont">
+                <div class="balance-cont">
+                  <div class="balance-div">
+                    <p class="cur-bal-txt">Current Balance</p>
+                    <p class="balance-txt">
+                      &#x20A6; <span class="balance">50,000.00</span>
+                    </p>
+                  </div>
+
+                  <p class="account-number-txt">
+                    Account Numer:
+                    <span class="account-number">1234567890</span>
+                  </p>
+
+                  <p class="Date-txt">22/07/23</p>
+                </div>
+
+                <div class="balance-stat-cont">
+                  <div class="stat-cont">
+                    <img
+                      src="/images/income-arrow.svg"
+                      alt=""
+                      class="income-icon"
+                    />
+                    <div class="stat-price-cont">
+                      <p class="balance-title">Income</p>
+                      <p class="income stat-price">
+                        &#x20A6; <span class="income-price">50,000.00</span>
+                      </p>
+                    </div>
+                  </div>
+                  <img
+                    src="/images/middle-line.svg"
+                    alt=""
+                    class="middle-line"
+                  />
+                  <div class="stat-cont">
+                    <img
+                      src="/images/outcome-arrow.svg"
+                      alt=""
+                      class="outcome-icon"
+                    />
+
+                    <div class="stat-price-cont outcome-price-cont">
+                      <p class="balance-title">Outcome</p>
+                      <p class="outcome stat-price">
+                        &#x20A6; <span class="outcome-price">50,000.00</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- ==========================================TAB NAV==================================== -->
+
+              <div class="tab-cont">
+                <button class="tab-btn">
+                  <img
+                    class="tab-img-hovered"
+                    src="/images/transfer-hovered.svg"
+                    alt=""
+                  />
+                  <img
+                    class="tab-img"
+                    src="/images/transfer.svg"
+                    alt=""
+                  />Transfer
+                </button>
+                <button class="tab-btn">
+                  <img
+                    class="tab-img-hovered"
+                    src="/images/loan-hovered.svg"
+                    alt=""
+                  />
+                  <img class="tab-img" src="/images/loan.svg" alt="" />Loan
+                </button>
+                <button class="tab-btn active">
+                  <img
+                    class="tab-img-hovered"
+                    src="/images/wallet-hovered.svg"
+                    alt=""
+                  />
+                  <img class="tab-img" src="/images/wallet.svg" alt="" />Add
+                  Money
+                </button>
+              </div>
+              <!-- ===================================================================================================DASHBOORD HOMEPAGE==================================================== -->
+              <div class="home page page-1">
+                <section class="transaction-history-section">
+                  <h2><strong>Transaction:</strong></h2>
+
+                  <div class="transaction-history">
+                    <!-- {% for transaction_data in transactions %} -->
+                    <div class="transaction__row">
+                      <div class="transaction--type transaction--type__deposit">
+                        <p class="message">
+                          Received Money from
+                          <span class="source">Doris Daniel</span>
+                        </p>
+                        <div class="transaction--date">3 days ago</div>
+                      </div>
+
+                      <div class="transaction-value value-type-credit">
+                        4 000€
+                      </div>
+                    </div>
+
+                    <div class="transaction__row">
+                      <div
+                        class="transaction--type transaction--type__withdrawal"
+                      >
+                        <p class="message">
+                          sent money to <span class="source">Doris Daniel</span>
+                        </p>
+                        <div class="transaction--date">3 days ago</div>
+                      </div>
+
+                      <div class="transaction-value value-type-debit">
+                        4 000€
+                      </div>
+                    </div>
+
+                    <div class="transaction__row">
+                      <div
+                        class="transaction--type transaction--type__withdrawal"
+                      >
+                        <p class="message">
+                          sent money to <span class="source">Doris Daniel</span>
+                        </p>
+                        <div class="transaction--date">3 days ago</div>
+                      </div>
+
+                      <div class="transaction-value value-type-debit">
+                        4 000€
+                      </div>
+                    </div>
+
+                    <div class="transaction__row">
+                      <div class="transaction--type transaction--type__deposit">
+                        <p class="message">
+                          Received Money from
+                          <span class="source">Doris Daniel</span>
+                        </p>
+                        <div class="transaction--date">3 days ago</div>
+                      </div>
+
+                      <div class="transaction-value value-type-credit">
+                        4 000€
+                      </div>
+                    </div>
+
+                    <div class="transaction__row">
+                      <div
+                        class="transaction--type transaction--type__withdrawal"
+                      >
+                        <p class="message">
+                          sent money to <span class="source">Doris Daniel</span>
+                        </p>
+                        <div class="transaction--date">3 days ago</div>
+                      </div>
+
+                      <div class="transaction-value value-type-debit">
+                        4 000€
+                      </div>
+                    </div>
+                  </div>
+                </section>
+              </div>
+
+              <!-- ==================================================TRANSFER PAGE============================================ -->
+              <div class="transfer page page-hidden page-2">
+                <div class="transfer-form-cont">
+                  <h3 id="">Make Transfer Banks:</h3>
+                  <form action="" class="transfer-form">
+                    <input
+                      type="number"
+                      class="transaction-input"
+                      id="recipient-account"
+                      placeholder="Recipient 10-digit Account Number/Tag"
+                    />
+                    <input
+                      type="number"
+                      class="transaction-input"
+                      id="transfer-amount"
+                      placeholder="Enter Amount"
+                    />
+                  </form>
+                  <button class="send-money transaction-btn">Send</button>
+                </div>
+              </div>
+
+              <!-- =================================================LOAN============================================================= -->
+
+              <div class="loan page page-hidden page-3">
+                <div class="transfer-form-cont">
+                  <h3 id="">Get Instant Loan</h3>
+                  <p class="loan-desc">
+                    Apply for Loans up to 20% of your total deposit
+                  </p>
+                  <form action="" class="transfer-form">
+                    <input
+                      type="number"
+                      class="transaction-input"
+                      id="loan-input"
+                      placeholder="Loan Amount"
+                    />
+                  </form>
+                  <button class="apply transaction-btn">Apply</button>
+                </div>
+              </div>
+
+              <!-- ==============================================FUND============================================================================== -->
+
+              <div class="fund page page-hidden page-4">
+                <div class="add-fund-cont">
+                  <h2 class="fund-txt">Fund Account</h2>
+                  <div class="add-fund">
+                    <div class="fund-cont">
+                      <div class="wrap">
+                        <div class="bank-icon-cont">
+                          <img
+                            src="/images/bank.svg"
+                            alt=""
+                            class="bank-icon"
+                          />
+                        </div>
+
+                        <div class="fund-inst">
+                          <h2 class="fund-title">Fund Via Bank Transfer</h2>
+                          <p class="fund-desc">
+                            FREE Instant ban funding in seconds
+                          </p>
+                        </div>
+                      </div>
+
+                      <hr />
+
+                      <div class="fund-inst">
+                        <p class="fund-acnt">Tura Account Number</p>
+                        <h1 class="fund-acnt-num">
+                          1234567890
+                          <span
+                            class="copy-icon"
+                            id="copyButton"
+                            data-clipboard-text="Text to be copied"
+                            ><img
+                              src="/images/copy.svg"
+                              alt=""
+                              class="copy-btn"
+                          /></span>
+                        </h1>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <section class="bottom-navigation">
+        <div class="botton-nav">
+          <div class="btm-nav-item">
+            <img
+              src="/images/home-btm-active.svg"
+              alt=""
+              class="btm-nav-img-active-1 btm-nav-img-active"
+            />
+            <img
+              src="/images/home-btm.svg"
+              alt=""
+              class="btm-nav-img btm-nav-1"
+            />
+            <p class="btm-nav-title btm-nav-title-active">Home</p>
+          </div>
+          <div class="btm-nav-item">
+            <img
+              src="/images/transfer-btm-active.svg"
+              alt=""
+              class="btm-nav-img-active-2 btm-nav-img-active"
+            />
+            <img src="/images/transfer-btm.svg" alt="" class="btm-nav-img" />
+
+            <p class="btm-nav-title">Transfer</p>
+          </div>
+          <div class="btm-nav-item">
+            <img
+              src="/images/loan-btm-active.svg"
+              alt=""
+              class="btm-nav-img-active-3 btm-nav-img-active"
+            />
+            <img src="/images/loan-btm.svg" alt="" class="btm-nav-img" />
+            <p class="btm-nav-title">Loan</p>
+          </div>
+
+          <div class="btm-nav-item">
+            <img
+              src="/images/wallet-btm-active.svg"
+              alt=""
+              class="btm-nav-img-active-4 btm-nav-img-active"
+            />
+            <img src="/images/wallet-btm.svg" alt="" class="btm-nav-img" />
+            <p class="btm-nav-title">Fund</p>
+          </div>
+
+          <!-- <div class="btm-nav-item">
+            <img
+              src="/images/history-btm.svg"
+              alt="history-icon"
+              class="btm-nav-img-5"
+            />
+
+            <p class="btm-nav-title">History</p>
+          </div> -->
+        </div>
+      </section>
+      <div class="notification-maincont hidden">
+        <div class="notification-container">
+          <div class="notification-div">
+            <!-- Notification will be displayed here -->
+            <div class="notification-thmb"></div>
+            <div class="notification-msg-cont">
+              <p class="notification-msg">
+                you recived &#x20A6;
+                <span class="msg-amount">50,000.00</span> from
+                <span class="source">Doris</span>
+              </p>
+              <p class="notification-time">1:20pm</p>
+            </div>
+          </div>
+
+          <div class="notification-div">
+            <!-- Notification will be displayed here -->
+            <div class="notification-thmb"></div>
+            <div class="notification-msg-cont">
+              <p class="notification-msg">
+                you recived &#x20A6;
+                <span class="msg-amount">50,000.00</span> from
+                <span class="source">Doris</span>
+              </p>
+              <p class="notification-time">1:20pm</p>
+            </div>
+          </div>
+
+          <div class="notification-div">
+            <!-- Notification will be displayed here -->
+            <div class="notification-thmb"></div>
+            <div class="notification-msg-cont">
+              <p class="notification-msg">
+                you recived &#x20A6;
+                <span class="msg-amount">50,000.00</span> from
+                <span class="source">Doris</span>
+              </p>
+              <p class="notification-time">1:20pm</p>
+            </div>
+          </div>
+
+          <div class="notification-div">
+            <!-- Notification will be displayed here -->
+            <div class="notification-thmb"></div>
+            <div class="notification-msg-cont">
+              <p class="notification-msg">
+                you recived &#x20A6;
+                <span class="msg-amount">50,000.00</span> from
+                <span class="source">Doris</span>
+              </p>
+              <p class="notification-time">1:20pm</p>
+            </div>
+          </div>
+
+          <div class="notification-div">
+            <!-- Notification will be displayed here -->
+            <div class="notification-thmb"></div>
+            <div class="notification-msg-cont">
+              <p class="notification-msg">
+                you recived &#x20A6;
+                <span class="msg-amount">50,000.00</span> from
+                <span class="source">Doris</span>
+              </p>
+              <p class="notification-time">1:20pm</p>
+            </div>
+          </div>
+
+          <div class="notification-div">
+            <!-- Notification will be displayed here -->
+            <div class="notification-thmb"></div>
+            <div class="notification-msg-cont">
+              <p class="notification-msg">
+                you recived &#x20A6;
+                <span class="msg-amount">50,000.00</span> from
+                <span class="source">Doris</span>
+              </p>
+              <p class="notification-time">1:20pm</p>
+            </div>
+          </div>
+
+          <div class="notification-div">
+            <!-- Notification will be displayed here -->
+            <div class="notification-thmb"></div>
+            <div class="notification-msg-cont">
+              <p class="notification-msg">
+                you recived &#x20A6;
+                <span class="msg-amount">50,000.00</span> from
+                <span class="source">Doris</span>
+              </p>
+              <p class="notification-time">1:20pm</p>
+            </div>
+          </div>
+
+          <div class="notification-div">
+            <!-- Notification will be displayed here -->
+            <div class="notification-thmb"></div>
+            <div class="notification-msg-cont">
+              <p class="notification-msg">
+                you recived &#x20A6;
+                <span class="msg-amount">50,000.00</span> from
+                <span class="source">Doris</span>
+              </p>
+              <p class="notification-time">1:20pm</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="overlay hidden"></div>
+    </div>
+    <script src="app.js" type="module"></script>
+  </body>
+</html>
