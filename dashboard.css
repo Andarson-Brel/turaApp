@@ -433,6 +433,69 @@ svg {
 .notification-container::-webkit-scrollbar {
   display: none; /* Remove default scrollbar for Chrome, Safari, and Opera */
 }
+
+.modal {
+  border-radius: 20px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 4rem;
+  box-shadow: 0 4rem 6rem rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  transition: all 0.5s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.modal__form {
+  margin-top: 20px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+.modal__form input {
+  width: 70%;
+  text-align: center;
+  padding: 1rem 0;
+  border-radius: 10px;
+  outline: none;
+  border: none;
+}
+
+.close-cont {
+  width: 100%;
+  display: flex;
+  justify-content: right;
+}
+.loginst-span {
+  color: #1aff88;
+}
+.close-img {
+  cursor: pointer;
+}
+.error-msg-email,
+.error-msg-firstname,
+.error-msg-lastname,
+.error-msg-password {
+  color: #fa2a2a;
+  display: none;
+}
+.btn {
+  background-color: transparent;
+  border: #b9b9b9 2px solid;
+  border-radius: 6px;
+  padding: 0.6rem 1rem;
+}
+.btn:hover {
+  background: #1aff88;
+  border: none;
+  color: #f6f6f6;
+}
 .notification-div {
   display: flex;
   align-items: center;
@@ -453,7 +516,7 @@ svg {
 }
 .msg-amount,
 .notification-msg,
-.source {
+.notification-source {
   color: #607787;
 }
 .notification-time {
@@ -482,11 +545,20 @@ svg {
 .hidden {
   display: none;
 }
+.modal__form input {
+  color: #1d2027;
+}
 /* .tab-btn.active {
   background-color: #00f262;
 } */
 /* =============================responsiveness============== */
 @media screen and (max-width: 1000px) {
+  .modal {
+    padding: 2rem;
+  }
+  .modal__form input {
+    width: 80%;
+  }
   .side-bar {
     display: none;
   }
@@ -573,6 +645,26 @@ svg {
   .transfer-form,
   .add-fund {
     padding: 1rem 0.5rem;
+  }
+
+  .modal {
+    width: 90%;
+    padding: 1rem;
+  }
+  .modal__form input {
+    width: 100%;
+    padding: 0.5rem 0;
+    border-radius: 6px;
+  }
+  .close-img {
+    width: 25px;
+  }
+  .modal__header {
+    font-size: 1rem;
+  }
+  .modal-desc {
+    font-size: 0.8rem;
+    text-align: center;
   }
 }
 

@@ -3,8 +3,8 @@
 const sideBarNav = document.querySelectorAll(".side-bar-nav");
 const pages = document.querySelectorAll(".page");
 const userImg = document.querySelector(".welcome-img");
-const balance = document.querySelector(".balance");
-const accountNumber = document.querySelector(".account-number");
+const labelBalance = document.querySelector(".balance");
+const accountNumberValue = document.querySelector(".account-number");
 const dateTxt = document.querySelector(".Date-txt");
 const profileIcon = document.querySelector(".profile-icon");
 const notificationIcon = document.querySelector(".notification-icon");
@@ -18,7 +18,7 @@ const transferInput = document.getElementById("transfer-amount");
 const sendMoneyBtn = document.querySelector(".send-money ");
 const loanInput = document.getElementById("loan-input");
 const loanBtn = document.querySelector(".apply");
-const fundAccountNumber = document.querySelector(".fund-acnt-num");
+const fundAccountNumber = document.querySelector(".fund-acnt-nmb");
 const copyBtn = document.querySelector(".copy-btn");
 const bottomNav = document.querySelector(".botton-nav");
 const btmNavItem = document.querySelectorAll(".btm-nav-item");
@@ -27,7 +27,55 @@ const btmIconActive = document.querySelectorAll(".btm-nav-img-active");
 const btmNavTitle = document.querySelectorAll(".btm-nav-title");
 const notificationContainer = document.querySelector(".notification-maincont");
 const overlay = document.querySelector(".overlay");
+const userNAme = document.querySelector(".user-name");
+const transactionHistoryCont = document.querySelector(".transaction-history");
+// const fundAccountNumber
 // const notificationIcon=document.querySelector('.notification-icon')
+let accountNumber;
+const account1 = {
+  email: "ab@g",
+  accountNumber: 123,
+  owner: "Jonas Schmedtmann",
+
+  transactions: [],
+  interestRate: 1.2, // %
+  pin: 1111,
+};
+
+const account2 = {
+  email: "ac@g",
+  accountNumber: 124,
+  owner: "Jessica Davis",
+
+  transactions: [],
+  interestRate: 1.5,
+  pin: 2222,
+};
+
+const account3 = {
+  email: "ad@g",
+  accountNumber: 125,
+  owner: "Steven Thomas Williams",
+
+  transactions: [],
+  interestRate: 0.7,
+  pin: 3333,
+};
+
+const account4 = {
+  email: "ae@g",
+  accountNumber: 126,
+  owner: "Sarah Smith",
+
+  transactions: [430, 1000, 700, 50, 90],
+  interestRate: 1,
+  pin: 4444,
+};
+
+const accounts = [account1, account2, account3, account4];
+// console.log(accounts);
+// console.log(accounts);
+
 // ========================================================NAVIGATION FUNCTION===================================================================
 const toggleNotification = function () {
   notificationContainer.classList.toggle("hidden");
@@ -62,9 +110,7 @@ const navigation = function () {
       btmNavTitle.forEach((btmNavTitle) =>
         btmNavTitle.classList.remove("btm-nav-title-active")
       );
-      // btmIconActive.forEach((inactiveBtn) => {
-      //   inactiveBtn.style.display = "block";
-      // });
+
       btmIconActive.forEach((btn) => {
         btn.style.display = "none";
       });
@@ -78,15 +124,13 @@ const navigation = function () {
       togglePages(index);
     });
   });
-  //  variable to track the clicked state
-  let clicked = false;
+
   tabBtn.forEach((tab, index) => {
     tab.addEventListener("mouseover", function () {
       tab.style.color = "#00f262";
       tab.style.backgroundColor = "#363636";
       tabBtnImg[index].style.display = "none";
       tabBtnHovered[index].style.display = "block";
-      console.log(`${index} was hovered`);
     });
 
     tab.addEventListener("mouseout", function () {
@@ -94,7 +138,6 @@ const navigation = function () {
       tab.style.backgroundColor = "#F7F9FC";
       tabBtnImg[index].style.display = "block";
       tabBtnHovered[index].style.display = "none";
-      console.log(`${index} was out`);
     });
 
     tab.addEventListener("click", function () {
@@ -102,6 +145,254 @@ const navigation = function () {
     });
   });
 };
+
+// ============================LOGIN=========================================================
+const loginModal = document.querySelector(".login");
+const inputLoginEmail = document.querySelector(".login-email");
+const inputLoginPassword = document.querySelector(".login-password");
+
+const loginBtn = document.querySelector(".login-submit");
+
+const closeLogin = function () {
+  loginModal.classList.toggle("hidden");
+  overlay.classList.toggle("hidden");
+};
+
+profileIcon.addEventListener("click", closeLogin);
+document.querySelector(".close-img").addEventListener("click", closeLogin);
+
+let currentAccount;
+loginBtn.addEventListener("click", function (e) {
+  e.preventDefault();
+  currentAccount = accounts.find((acc) => {
+    return acc.email === inputLoginEmail.value.toLowerCase();
+  });
+
+  if (currentAccount?.pin === Number(inputLoginPassword.value)) {
+    // const accountNumber = (Date.now() + "").slice(-10);
+    // currentAccount.accountNumber = accountNumber;
+    userNAme.textContent = currentAccount.owner.split(" ")[0];
+    fundAccountNumber.textContent = currentAccount.accountNumber;
+    accountNumberValue.textContent = currentAccount.accountNumber;
+    closeLogin();
+    displayTransaction(currentAccount);
+    printBalance(currentAccount);
+    calcDisplaySummary(currentAccount);
+    // console.log(currentAccount);
+  } else {
+    console.log("Account not found.");
+  }
+});
+
+// sumary
+const updateUi = function (acc) {
+  // displayMovement
+  displayTransaction(acc);
+
+  // displaybalance
+  printBalance(acc);
+
+  // display summary
+  calcDisplaySummary(acc);
+};
+
+const calcDisplaySummary = function (acc) {
+  // TOTAL DEPOSIT
+
+  const totalDeposit = acc.transactions
+    .filter((mov) => {
+      return mov > 0;
+    })
+    .reduce((acm, curr) => acm + curr, 0);
+  acc.totalDeposit = totalDeposit;
+  incomePrice.textContent = `${totalDeposit}`;
+
+  // TOTAL WITHDRAWAL
+
+  const totalWithdrawal = acc.transactions
+    .filter((mov) => {
+      return mov < 0;
+    })
+    .reduce((acm, curr) => acm + curr, 0);
+
+  outcomePrice.textContent = `${Math.abs(totalWithdrawal)}`;
+
+  // INTEREST
+
+  // const interestRate = acc.interestRate / 100;
+  // const interest = acc.movements
+  //   .filter(mov => mov > 0)
+  //   .map(mov => mov * interestRate)
+  //   .filter(int => int >= 1)
+  //   .reduce((acm, curr) => acm + curr, 0);
+  // labelSumInterest.textContent = `${interest}€`;
+  // return console.log(totalDeposit);
+};
+
+// updating transaction history
+
+// const displayTransaction = function (acc, sort = false) {
+//   transactionHistoryCont.innerHTML = "";
+//   const movs = sort
+//     ? acc.transactions.slice().sort((a, b) => a - b)
+//     : acc.transactions;
+//   movs.forEach((mov, i) => {
+//     const type = mov > 0 ? "deposit" : "withdrawal";
+
+//     const html = `
+// <div class="transaction__row">
+//                       <div class="transaction--type transaction--type__${type}">
+//                         <p class="message">${
+//                           type === "deposit" ? "recievd" : "sent"
+//                         }
+//                            Money ${type === "deposit" ? "from" : "to"}
+//                           <span class="source">Doris Daniel</span>
+//                         </p>
+//                         <div class="transaction--date">3 days ago</div>
+//                       </div>
+
+//                       <div class="transaction-value value-type-credit">
+//                         ${mov}€
+//                       </div>
+//                     </div>
+// `;
+
+//     transactionHistoryCont.insertAdjacentHTML("afterbegin", html);
+//   });
+// };
+
+const displayTransaction = function (acc, sort = false) {
+  transactionHistoryCont.innerHTML = "";
+  const movs = sort
+    ? acc.transactions.slice().sort((a, b) => a - b)
+    : acc.transactions;
+  movs.forEach((mov, i) => {
+    const type = mov > 0 ? "deposit" : "withdrawal";
+    const otherPartyAccount = accounts.find((a) =>
+      a.transactions.includes(-mov)
+    );
+    const otherPartyName = otherPartyAccount
+      ? otherPartyAccount.owner
+      : "Unknown";
+
+    const html = `
+      <div class="transaction__row">
+        <div class="transaction--type transaction--type__${type}">
+          <p class="message">${type === "deposit" ? "received" : "sent"}
+             Money ${type === "deposit" ? "from" : "to"}
+            <span class="source">${otherPartyName}</span>
+          </p>
+          <div class="transaction--date">3 days ago</div>
+        </div>
+        <div class="transaction-value value-type-credit">
+          ${mov}€
+        </div>
+      </div>
+    `;
+
+    transactionHistoryCont.insertAdjacentHTML("afterbegin", html);
+  });
+};
+
+// print balance
+const printBalance = function (acc) {
+  const balance = acc.transactions.reduce((acm, cur) => {
+    return acm + cur;
+  }, 0);
+  acc.balance = balance;
+  labelBalance.textContent = `${acc.balance}`;
+};
+
+// transfer functionality
+
+// sendMoneyBtn.addEventListener("click", function (e) {
+//   e.preventDefault();
+//   const receiverAcnt = accounts.find(
+//     (acc) => acc.accountNumber === Number(recipientAccountNumber.value)
+//   );
+
+//   const amount = Number(transferInput.value);
+//   const receiverName = receiverAcnt ? receiverAcnt.owner : "Account not found";
+//   transferInput.value = recipientAccountNumber.value = "";
+//   if (
+//     amount > 0 &&
+//     currentAccount.balance > 0 &&
+//     receiverAcnt &&
+//     currentAccount.balance >= amount &&
+//     receiverAcnt.accountNumber !== currentAccount.accountNumber
+//   ) {
+//     currentAccount.transactions.push(-amount);
+//     receiverAcnt.transactions.push(amount);
+//     updateUi(currentAccount);
+
+//     console.log(`${amount} sent to ${receiverName}`);
+//   }
+// });
+
+sendMoneyBtn.addEventListener("click", function (e) {
+  e.preventDefault();
+  const receiverAcnt = accounts.find(
+    (acc) => acc.accountNumber === Number(recipientAccountNumber.value)
+  );
+
+  const amount = Number(transferInput.value);
+  if (
+    amount > 0 &&
+    currentAccount.balance > 0 &&
+    receiverAcnt &&
+    currentAccount.balance >= amount &&
+    receiverAcnt.accountNumber !== currentAccount.accountNumber
+  ) {
+    currentAccount.transactions.push(-amount);
+    receiverAcnt.transactions.push(amount);
+    updateUi(currentAccount);
+
+    console.log(`${amount} sent to ${receiverAcnt.owner}`);
+  }
+  transferInput.value = recipientAccountNumber.value = "";
+});
+
+// copy functionality
+
+copyBtn.addEventListener("click", function () {
+  const textToCopy = fundAccountNumber.textContent;
+
+  // Create a temporary input element to facilitate copying
+  const tempInput = document.createElement("input");
+  tempInput.value = textToCopy;
+  document.body.appendChild(tempInput);
+
+  // Select the text within the input element
+  tempInput.select();
+  tempInput.setSelectionRange(0, 99999); // For mobile devices
+
+  // Copy the selected text to the clipboard
+  document.execCommand("copy");
+
+  // Remove the temporary input element
+  document.body.removeChild(tempInput);
+
+  // Provide some visual feedback or alert to indicate the copy action
+  alert("Copied: " + textToCopy);
+});
+
+// loan functionality
+
+loanBtn.addEventListener("click", function (e) {
+  e.preventDefault();
+  const amount = Number(loanInput.value);
+  if (
+    amount > 0 &&
+    currentAccount.transactions.some((mov) => mov >= amount * 0.1) &&
+    amount < currentAccount.totalDeposit
+  ) {
+    currentAccount.transactions.push(amount);
+
+    updateUi(currentAccount);
+    // inputLoanAmount.value = "";
+    loanInput.value = "";
+  }
+});
 
 // ===================================================NOTIFICATION FUNCTIONALITY=============================================================
 notificationIcon.addEventListener("click", toggleNotification);
@@ -122,8 +413,6 @@ class account {
     this.#passWord = passWord;
   }
 }
-// const accounts = require("./index");
-// console.log(accounts);
 
 // ================================================================= ALL FUNCTIONS ========================================================================
 navigation();

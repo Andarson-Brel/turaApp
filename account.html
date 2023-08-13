@@ -175,7 +175,7 @@
 
                   <div class="transaction-history">
                     <!-- {% for transaction_data in transactions %} -->
-                    <div class="transaction__row">
+                    <!-- <div class="transaction__row">
                       <div class="transaction--type transaction--type__deposit">
                         <p class="message">
                           Received Money from
@@ -246,7 +246,7 @@
                       <div class="transaction-value value-type-debit">
                         4 000€
                       </div>
-                    </div>
+                    </div> -->
                   </div>
                 </section>
               </div>
@@ -322,7 +322,8 @@
                       <div class="fund-inst">
                         <p class="fund-acnt">Tura Account Number</p>
                         <h1 class="fund-acnt-num">
-                          1234567890
+                          <span class="fund-acnt-nmb"> 1234567890 </span>
+
                           <span
                             class="copy-icon"
                             id="copyButton"
@@ -408,7 +409,7 @@
               <p class="notification-msg">
                 you recived &#x20A6;
                 <span class="msg-amount">50,000.00</span> from
-                <span class="source">Doris</span>
+                <span class="notification-source">Doris</span>
               </p>
               <p class="notification-time">1:20pm</p>
             </div>
@@ -421,7 +422,7 @@
               <p class="notification-msg">
                 you recived &#x20A6;
                 <span class="msg-amount">50,000.00</span> from
-                <span class="source">Doris</span>
+                <span class="notification-source">Doris</span>
               </p>
               <p class="notification-time">1:20pm</p>
             </div>
@@ -434,7 +435,7 @@
               <p class="notification-msg">
                 you recived &#x20A6;
                 <span class="msg-amount">50,000.00</span> from
-                <span class="source">Doris</span>
+                <span class="notification-source">Doris</span>
               </p>
               <p class="notification-time">1:20pm</p>
             </div>
@@ -447,7 +448,7 @@
               <p class="notification-msg">
                 you recived &#x20A6;
                 <span class="msg-amount">50,000.00</span> from
-                <span class="source">Doris</span>
+                <span class="notification-source">Doris</span>
               </p>
               <p class="notification-time">1:20pm</p>
             </div>
@@ -460,7 +461,7 @@
               <p class="notification-msg">
                 you recived &#x20A6;
                 <span class="msg-amount">50,000.00</span> from
-                <span class="source">Doris</span>
+                <span class="notification-source">Doris</span>
               </p>
               <p class="notification-time">1:20pm</p>
             </div>
@@ -473,7 +474,7 @@
               <p class="notification-msg">
                 you recived &#x20A6;
                 <span class="msg-amount">50,000.00</span> from
-                <span class="source">Doris</span>
+                <span class="notification-source">Doris</span>
               </p>
               <p class="notification-time">1:20pm</p>
             </div>
@@ -486,7 +487,7 @@
               <p class="notification-msg">
                 you recived &#x20A6;
                 <span class="msg-amount">50,000.00</span> from
-                <span class="source">Doris</span>
+                <span class="notification-source">Doris</span>
               </p>
               <p class="notification-time">1:20pm</p>
             </div>
@@ -499,12 +500,30 @@
               <p class="notification-msg">
                 you recived &#x20A6;
                 <span class="msg-amount">50,000.00</span> from
-                <span class="source">Doris</span>
+                <span class="notification-source">Doris</span>
               </p>
               <p class="notification-time">1:20pm</p>
             </div>
           </div>
         </div>
+      </div>
+      <div class="modal hidden login">
+        <div class="close-cont">
+          <img src="/images/close.svg" alt="" class="close-img" />
+        </div>
+        <h2 class="modal__header">Login</h2>
+        <p class="modal-desc">Welcome Back Login and explore</p>
+        <form class="modal__form">
+          <input type="email" class="login-email" placeholder="Email Address" />
+
+          <input
+            type="password"
+            class="login-password"
+            placeholder="Enter Password"
+          />
+
+          <button class="login-submit btn">Login</button>
+        </form>
       </div>
       <div class="overlay hidden"></div>
     </div>
