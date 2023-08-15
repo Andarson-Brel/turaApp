@@ -712,9 +712,6 @@ svg {
 }
 
 @media screen and (max-width: 550px) {
-  * {
-    font-size: 14px;
-  }
   .transaction-value,
   .tab-btn,
   .message,
