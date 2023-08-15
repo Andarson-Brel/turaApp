@@ -373,6 +373,10 @@ svg {
   align-items: center;
   gap: 5px;
 }
+.btm-nav-item img {
+  width: 30px;
+  height: 30px;
+}
 .btm-nav-img-active {
   display: none;
 }
@@ -386,7 +390,7 @@ svg {
   display: none;
 }
 .btm-nav-title {
-  font-size: 0.8rem;
+  font-size: 0.6rem;
   font-weight: 600;
   color: #395466;
 }
@@ -718,7 +722,16 @@ svg {
   .account-number-txt,
   .account-number,
   .Date-txt {
-    font-size: 0.7rem;
+    font-size: 0.6rem;
+  }
+  .stat-cont img {
+    width: 25px;
+  }
+  .main-section {
+    padding-top: 3rem;
+  }
+  .tab-btn {
+    padding: 0.4rem 0.7rem;
   }
   .transaction-history-section h2 {
     font-size: 1.2rem;
@@ -795,9 +808,7 @@ svg {
   .middle-line {
     margin: 0 10px;
   }
-  .user-dashboard-container {
-    padding: 1rem 1rem 1rem 2rem;
-  }
+
   .user-dashboard {
     border-radius: 16px;
     width: 90%;
@@ -807,5 +818,12 @@ svg {
   }
   .logo {
     width: 50px;
+  }
+  .greeting {
+    font-size: 0.8rem;
+  }
+  .welcome-img-cont {
+    width: 30px;
+    height: 30px;
   }
 }

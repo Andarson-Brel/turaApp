@@ -271,7 +271,7 @@ const displayTransaction = function (acc, sort = false) {
           <div class="transaction--date">3 days ago</div>
         </div>
         <div class="transaction-value value-type-credit">
-          ${mov}€
+          ${mov}&#x20A6
         </div>
       </div>
     `;
