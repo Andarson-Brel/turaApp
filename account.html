@@ -26,11 +26,15 @@
             alt=""
             class="profile-icon"
           />
-
+          <img
+            src="/images/unread-notification.svg"
+            alt=""
+            class="notification-icon unread-notification"
+          />
           <img
             src="/images/basil_notification-on-solid.svg"
             alt=""
-            class="notification-icon"
+            class="notification-icon read-notification"
           />
         </div>
       </nav>
@@ -71,7 +75,7 @@
               <div class="welcome-message">
                 <div class="welcome-img-cont">
                   <img
-                    src="/images/Ellipse -194.png"
+                    src="/images/material-symbols_account-circle.svg"
                     alt=""
                     class="welcome-img"
                   />
@@ -401,111 +405,7 @@
         </div>
       </section>
       <div class="notification-maincont hidden">
-        <div class="notification-container">
-          <div class="notification-div">
-            <!-- Notification will be displayed here -->
-            <div class="notification-thmb"></div>
-            <div class="notification-msg-cont">
-              <p class="notification-msg">
-                you recived &#x20A6;
-                <span class="msg-amount">50,000.00</span> from
-                <span class="notification-source">Doris</span>
-              </p>
-              <p class="notification-time">1:20pm</p>
-            </div>
-          </div>
-
-          <div class="notification-div">
-            <!-- Notification will be displayed here -->
-            <div class="notification-thmb"></div>
-            <div class="notification-msg-cont">
-              <p class="notification-msg">
-                you recived &#x20A6;
-                <span class="msg-amount">50,000.00</span> from
-                <span class="notification-source">Doris</span>
-              </p>
-              <p class="notification-time">1:20pm</p>
-            </div>
-          </div>
-
-          <div class="notification-div">
-            <!-- Notification will be displayed here -->
-            <div class="notification-thmb"></div>
-            <div class="notification-msg-cont">
-              <p class="notification-msg">
-                you recived &#x20A6;
-                <span class="msg-amount">50,000.00</span> from
-                <span class="notification-source">Doris</span>
-              </p>
-              <p class="notification-time">1:20pm</p>
-            </div>
-          </div>
-
-          <div class="notification-div">
-            <!-- Notification will be displayed here -->
-            <div class="notification-thmb"></div>
-            <div class="notification-msg-cont">
-              <p class="notification-msg">
-                you recived &#x20A6;
-                <span class="msg-amount">50,000.00</span> from
-                <span class="notification-source">Doris</span>
-              </p>
-              <p class="notification-time">1:20pm</p>
-            </div>
-          </div>
-
-          <div class="notification-div">
-            <!-- Notification will be displayed here -->
-            <div class="notification-thmb"></div>
-            <div class="notification-msg-cont">
-              <p class="notification-msg">
-                you recived &#x20A6;
-                <span class="msg-amount">50,000.00</span> from
-                <span class="notification-source">Doris</span>
-              </p>
-              <p class="notification-time">1:20pm</p>
-            </div>
-          </div>
-
-          <div class="notification-div">
-            <!-- Notification will be displayed here -->
-            <div class="notification-thmb"></div>
-            <div class="notification-msg-cont">
-              <p class="notification-msg">
-                you recived &#x20A6;
-                <span class="msg-amount">50,000.00</span> from
-                <span class="notification-source">Doris</span>
-              </p>
-              <p class="notification-time">1:20pm</p>
-            </div>
-          </div>
-
-          <div class="notification-div">
-            <!-- Notification will be displayed here -->
-            <div class="notification-thmb"></div>
-            <div class="notification-msg-cont">
-              <p class="notification-msg">
-                you recived &#x20A6;
-                <span class="msg-amount">50,000.00</span> from
-                <span class="notification-source">Doris</span>
-              </p>
-              <p class="notification-time">1:20pm</p>
-            </div>
-          </div>
-
-          <div class="notification-div">
-            <!-- Notification will be displayed here -->
-            <div class="notification-thmb"></div>
-            <div class="notification-msg-cont">
-              <p class="notification-msg">
-                you recived &#x20A6;
-                <span class="msg-amount">50,000.00</span> from
-                <span class="notification-source">Doris</span>
-              </p>
-              <p class="notification-time">1:20pm</p>
-            </div>
-          </div>
-        </div>
+        <div class="notification-container"></div>
       </div>
       <div class="modal hidden login">
         <div class="close-cont">
@@ -525,6 +425,14 @@
           <button class="login-submit btn">Login</button>
         </form>
       </div>
+      <div class="push-notificstion-cont">
+        <div class="push-notificstion">
+          <img src="/images/checkmark.svg" alt="" class="msg-icon">
+          <p class="push-notif-msg">Transfer of &#x20A6 500 to John was successful</p>
+        </div>
+
+      </div>
+      
       <div class="overlay hidden"></div>
     </div>
     <script src="app.js" type="module"></script>

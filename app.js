@@ -7,7 +7,7 @@ const labelBalance = document.querySelector(".balance");
 const accountNumberValue = document.querySelector(".account-number");
 const dateTxt = document.querySelector(".Date-txt");
 const profileIcon = document.querySelector(".profile-icon");
-const notificationIcon = document.querySelector(".notification-icon");
+const notificationIcon = document.querySelectorAll(".notification-icon");
 const incomePrice = document.querySelector(".income-price");
 const outcomePrice = document.querySelector(".outcome-price");
 const tabBtn = document.querySelectorAll(".tab-btn");
@@ -29,6 +29,9 @@ const notificationContainer = document.querySelector(".notification-maincont");
 const overlay = document.querySelector(".overlay");
 const userNAme = document.querySelector(".user-name");
 const transactionHistoryCont = document.querySelector(".transaction-history");
+const notificationContainer2 = document.querySelector(
+  ".notification-container"
+);
 // const fundAccountNumber
 // const notificationIcon=document.querySelector('.notification-icon')
 let accountNumber;
@@ -67,7 +70,7 @@ const account4 = {
   accountNumber: 126,
   owner: "Sarah Smith",
 
-  transactions: [430, 1000, 700, 50, 90],
+  transactions: [430, 1000, 700, 50, -90],
   interestRate: 1,
   pin: 4444,
 };
@@ -77,6 +80,18 @@ const accounts = [account1, account2, account3, account4];
 // console.log(accounts);
 
 // ========================================================NAVIGATION FUNCTION===================================================================
+// date function
+function getFormattedDate(date) {
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  const day = date.getDate().toString().padStart(2, "0");
+  return `${month}/${day}/${year}`;
+}
+
+const today = new Date();
+
+// console.log(formattedDate); // Output: 08/13/2023 (for today's date)
+
 const toggleNotification = function () {
   notificationContainer.classList.toggle("hidden");
   overlay.classList.toggle("hidden");
@@ -178,6 +193,7 @@ loginBtn.addEventListener("click", function (e) {
     displayTransaction(currentAccount);
     printBalance(currentAccount);
     calcDisplaySummary(currentAccount);
+    dateTxt.textContent = getFormattedDate(today);
     // console.log(currentAccount);
   } else {
     console.log("Account not found.");
@@ -231,36 +247,6 @@ const calcDisplaySummary = function (acc) {
 
 // updating transaction history
 
-// const displayTransaction = function (acc, sort = false) {
-//   transactionHistoryCont.innerHTML = "";
-//   const movs = sort
-//     ? acc.transactions.slice().sort((a, b) => a - b)
-//     : acc.transactions;
-//   movs.forEach((mov, i) => {
-//     const type = mov > 0 ? "deposit" : "withdrawal";
-
-//     const html = `
-// <div class="transaction__row">
-//                       <div class="transaction--type transaction--type__${type}">
-//                         <p class="message">${
-//                           type === "deposit" ? "recievd" : "sent"
-//                         }
-//                            Money ${type === "deposit" ? "from" : "to"}
-//                           <span class="source">Doris Daniel</span>
-//                         </p>
-//                         <div class="transaction--date">3 days ago</div>
-//                       </div>
-
-//                       <div class="transaction-value value-type-credit">
-//                         ${mov}€
-//                       </div>
-//                     </div>
-// `;
-
-//     transactionHistoryCont.insertAdjacentHTML("afterbegin", html);
-//   });
-// };
-
 const displayTransaction = function (acc, sort = false) {
   transactionHistoryCont.innerHTML = "";
   const movs = sort
@@ -294,6 +280,44 @@ const displayTransaction = function (acc, sort = false) {
   });
 };
 
+// display notification functionality
+
+const displayNotification = function (acc, sort = false) {
+  notificationContainer2.innerHTML = "";
+  const movs = sort
+    ? acc.transactions.slice().sort((a, b) => a - b)
+    : acc.transactions;
+  movs.forEach((mov, i) => {
+    const type = mov > 0 ? "deposit" : "withdrawal";
+    const otherPartyAccount = accounts.find((a) =>
+      a.transactions.includes(-mov)
+    );
+    const otherPartyName = otherPartyAccount
+      ? otherPartyAccount.owner
+      : "Unknown";
+
+    const html = `
+     <div class="notification-div">
+     
+            <div class="notification-thmb notification-thmb--${type}"></div>
+            <div class="notification-msg-cont">
+              <p class="notification-msg">
+                you ${type === "deposit" ? "received" : "sent"} &#x20A6;
+                <span class="msg-amount">${mov}.00</span> ${
+      type === "deposit" ? "from" : "to"
+    }
+                <span class="notification-source">${otherPartyName}</span>
+              </p>
+              <p class="notification-time">1:20pm</p>
+            </div>
+           
+          </div>
+    `;
+
+    notificationContainer2.insertAdjacentHTML("afterbegin", html);
+  });
+};
+
 // print balance
 const printBalance = function (acc) {
   const balance = acc.transactions.reduce((acm, cur) => {
@@ -302,32 +326,6 @@ const printBalance = function (acc) {
   acc.balance = balance;
   labelBalance.textContent = `${acc.balance}`;
 };
-
-// transfer functionality
-
-// sendMoneyBtn.addEventListener("click", function (e) {
-//   e.preventDefault();
-//   const receiverAcnt = accounts.find(
-//     (acc) => acc.accountNumber === Number(recipientAccountNumber.value)
-//   );
-
-//   const amount = Number(transferInput.value);
-//   const receiverName = receiverAcnt ? receiverAcnt.owner : "Account not found";
-//   transferInput.value = recipientAccountNumber.value = "";
-//   if (
-//     amount > 0 &&
-//     currentAccount.balance > 0 &&
-//     receiverAcnt &&
-//     currentAccount.balance >= amount &&
-//     receiverAcnt.accountNumber !== currentAccount.accountNumber
-//   ) {
-//     currentAccount.transactions.push(-amount);
-//     receiverAcnt.transactions.push(amount);
-//     updateUi(currentAccount);
-
-//     console.log(`${amount} sent to ${receiverName}`);
-//   }
-// });
 
 sendMoneyBtn.addEventListener("click", function (e) {
   e.preventDefault();
@@ -345,8 +343,9 @@ sendMoneyBtn.addEventListener("click", function (e) {
   ) {
     currentAccount.transactions.push(-amount);
     receiverAcnt.transactions.push(amount);
-    updateUi(currentAccount);
 
+    updateUi(currentAccount);
+    displayNotification(currentAccount);
     console.log(`${amount} sent to ${receiverAcnt.owner}`);
   }
   transferInput.value = recipientAccountNumber.value = "";
@@ -371,9 +370,6 @@ copyBtn.addEventListener("click", function () {
 
   // Remove the temporary input element
   document.body.removeChild(tempInput);
-
-  // Provide some visual feedback or alert to indicate the copy action
-  alert("Copied: " + textToCopy);
 });
 
 // loan functionality
@@ -395,7 +391,12 @@ loanBtn.addEventListener("click", function (e) {
 });
 
 // ===================================================NOTIFICATION FUNCTIONALITY=============================================================
-notificationIcon.addEventListener("click", toggleNotification);
+notificationIcon.forEach((icon) => {
+  icon.addEventListener("click", function () {
+    toggleNotification();
+    displayNotification(currentAccount);
+  });
+});
 overlay.addEventListener("click", toggleNotification);
 
 // ====================================================APP FUNCTIONALITY=============================================================================================================

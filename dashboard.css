@@ -506,9 +506,14 @@ svg {
 .notification-thmb {
   width: 30px;
   height: 30px;
-  background-color: #00ff68;
   border-radius: 50%;
   overflow: hidden;
+}
+.notification-thmb--deposit {
+  background-color: #00ff68;
+}
+.notification-thmb--withdrawal {
+  background-color: #ff0000;
 }
 
 .notification-msg {
@@ -548,6 +553,44 @@ svg {
 .modal__form input {
   color: #1d2027;
 }
+.unread-notification {
+  display: none;
+}
+.push-notificstion-cont {
+  top: 0;
+  position: fixed;
+  z-index: 3500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-color: #fff;
+  width: 40%;
+  height: 50vh;
+  top: 50%;
+  left: 50%;
+  border-radius: 10px;
+  transform: translate(-50%, -50%);
+  display: none;
+}
+.push-notificstion-cont img {
+  width: 80px;
+  margin: 1rem 0;
+}
+/* .push-notificstion {
+  position: absolute;
+  top: -50%;
+  left: 50%;
+  transform: translatey(-50%);
+} */
+
+/* .push-notification {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 3500;
+} */
+
 /* .tab-btn.active {
   background-color: #00f262;
 } */
@@ -669,34 +712,9 @@ svg {
 }
 
 @media screen and (max-width: 550px) {
-  .cur-bal-txt {
-    font-size: 1rem;
+  * {
+    font-size: 14px;
   }
-  .balance-txt {
-    font-size: 1.4rem;
-  }
-  .tab-cont,
-  .stat-cont {
-    gap: 8px;
-  }
-  .middle-line {
-    margin: 0 10px;
-  }
-  .user-dashboard-container {
-    padding: 1rem 1rem 1rem 2rem;
-  }
-  .user-dashboard {
-    border-radius: 16px;
-    width: 90%;
-  }
-  .navbar {
-    padding: 1rem 2rem;
-  }
-  .logo {
-    width: 50px;
-  }
-}
-@media screen and (max-width: 550px) {
   .transaction-value,
   .tab-btn,
   .message,
@@ -765,5 +783,32 @@ svg {
 
   .notification-container {
     width: 100%;
+  }
+
+  .cur-bal-txt {
+    font-size: 1rem;
+  }
+  .balance-txt {
+    font-size: 1.4rem;
+  }
+  .tab-cont,
+  .stat-cont {
+    gap: 8px;
+  }
+  .middle-line {
+    margin: 0 10px;
+  }
+  .user-dashboard-container {
+    padding: 1rem 1rem 1rem 2rem;
+  }
+  .user-dashboard {
+    border-radius: 16px;
+    width: 90%;
+  }
+  .navbar {
+    padding: 1rem 2rem;
+  }
+  .logo {
+    width: 50px;
   }
 }
