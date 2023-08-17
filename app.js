@@ -195,6 +195,8 @@ document.querySelector(".close-img").addEventListener("click", closeLogin);
 
 let currentAccount;
 loginBtn.addEventListener("click", function (e) {
+  navigation();
+  togglePages(0);
   e.preventDefault();
   currentAccount = accounts.find((acc) => {
     return acc.email === inputLoginEmail.value.toLowerCase();

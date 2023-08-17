@@ -584,6 +584,10 @@ svg {
 .fund-title {
   margin-bottom: 0.6rem;
 }
+.loan-desc {
+  /* font-size: 0.6rem; */
+  margin-bottom: 0.8rem;
+}
 /* .push-notificstion {
   position: absolute;
   top: -50%;
@@ -735,7 +739,7 @@ svg {
   }
   .loan-desc {
     font-size: 0.6rem;
-    margin-bottom: 0.8rem;
+    /* margin-bottom: 0.8rem; */
   }
   .tab-btn {
     padding: 0.4rem 0.7rem;
