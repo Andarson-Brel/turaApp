@@ -32,6 +32,8 @@ const transactionHistoryCont = document.querySelector(".transaction-history");
 const notificationContainer2 = document.querySelector(
   ".notification-container"
 );
+const transactionInputs = document.querySelectorAll(".transaction-input");
+const transactionBtns = document.querySelectorAll(".transaction-btn");
 // const fundAccountNumber
 // const notificationIcon=document.querySelector('.notification-icon')
 let accountNumber;
@@ -119,7 +121,22 @@ const navigation = function () {
       togglePages(index);
     });
   });
-
+  transactionInputs.forEach((input, index) =>
+    input.addEventListener("focus", function () {
+      transactionBtns.forEach((btn) => {
+        btn.style.backgroundColor = "#b8ffd5";
+        btn.style.color = "#b1d2bf";
+      });
+      if (index === 1) {
+        index = 0;
+      }
+      if (index === 2) {
+        index = 1;
+      }
+      transactionBtns[index].style.backgroundColor = "#16E069";
+      transactionBtns[index].style.color = "white";
+    })
+  );
   btmNavItem.forEach((btn, index) => {
     btn.addEventListener("click", (e) => {
       btmNavTitle.forEach((btmNavTitle) =>
@@ -135,7 +152,7 @@ const navigation = function () {
       btmIconInactive[index].style.display = "none";
       btmIconActive[index].style.display = "block";
       btmNavTitle[index].classList.add("btm-nav-title-active");
-      console.log(btmNavTitle[index]);
+      // console.log(btmNavTitle[index]);
       togglePages(index);
     });
   });
@@ -271,7 +288,7 @@ const displayTransaction = function (acc, sort = false) {
           <div class="transaction--date">3 days ago</div>
         </div>
         <div class="transaction-value value-type-credit">
-          ${mov}&#x20A6
+        &#x20A6 ${mov}
         </div>
       </div>
     `;
