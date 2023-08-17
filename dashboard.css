@@ -725,10 +725,15 @@ svg {
 @media screen and (max-width: 550px) {
   .transaction-value,
   .tab-btn,
-  .message,
   .account-number-txt,
   .account-number,
   .Date-txt {
+    font-size: 0.6rem;
+  }
+  .message {
+    font-size: 0.75rem;
+  }
+  .transaction--date {
     font-size: 0.6rem;
   }
   .stat-cont img {
@@ -787,7 +792,7 @@ svg {
     padding: 1rem 0.5rem;
   }
   .user-dashboard {
-    height: 75vh;
+    height: 80vh;
   }
   .bottom-navigation {
     display: block;
@@ -836,5 +841,8 @@ svg {
   .welcome-img-cont {
     width: 30px;
     height: 30px;
+  }
+  .transaction-history-section h2 {
+    font-size: 1rem;
   }
 }
