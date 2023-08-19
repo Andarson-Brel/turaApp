@@ -34,6 +34,8 @@ const notificationContainer2 = document.querySelector(
 );
 const transactionInputs = document.querySelectorAll(".transaction-input");
 const transactionBtns = document.querySelectorAll(".transaction-btn");
+const pushNotification = document.querySelector(".push-notificstion-cont");
+const pushMsg = document.querySelector(".push-notif-msg");
 // const fundAccountNumber
 // const notificationIcon=document.querySelector('.notification-icon')
 let accountNumber;
@@ -121,6 +123,7 @@ const navigation = function () {
       togglePages(index);
     });
   });
+  let focusedInputIndex = 0;
   transactionInputs.forEach((input, index) =>
     input.addEventListener("focus", function () {
       transactionBtns.forEach((btn) => {
@@ -135,8 +138,17 @@ const navigation = function () {
       }
       transactionBtns[index].style.backgroundColor = "#16E069";
       transactionBtns[index].style.color = "white";
+      // Update the focusedInputIndex variable
+      focusedInputIndex = index;
+      console.log(transactionBtns[index]);
     })
   );
+  transactionInputs.forEach((input, index) =>
+    input.addEventListener("blur", function () {
+      focusedInputIndex = 0;
+    })
+  );
+
   btmNavItem.forEach((btn, index) => {
     btn.addEventListener("click", (e) => {
       btmNavTitle.forEach((btmNavTitle) =>
@@ -177,7 +189,20 @@ const navigation = function () {
     });
   });
 };
+const toastBox = document.querySelector(".toast-box");
 
+const showToast = function (msg) {
+  let toast = document.createElement("div");
+  toast.classList.add("toast");
+  toast.innerHTML = msg;
+  toastBox.appendChild(toast);
+  if (msg.includes("Successfully")) {
+    toast.classList.add("success");
+  }
+  setTimeout(() => {
+    toast.remove();
+  }, 4000);
+};
 // ============================LOGIN=========================================================
 const loginModal = document.querySelector(".login");
 const inputLoginEmail = document.querySelector(".login-email");
@@ -278,19 +303,19 @@ const displayTransaction = function (acc, sort = false) {
     );
     const otherPartyName = otherPartyAccount
       ? otherPartyAccount.owner
-      : "Unknown";
+      : "Admin";
 
     const html = `
       <div class="transaction__row">
         <div class="transaction--type transaction--type__${type}">
-          <p class="message">${type === "deposit" ? "received" : "sent"}
+          <p class="message">${type === "deposit" ? "Received" : "Sent"}
              Money ${type === "deposit" ? "from" : "to"}
             <span class="source">${otherPartyName}</span>
           </p>
           <div class="transaction--date">3 days ago</div>
         </div>
-        <div class="transaction-value value-type-credit">
-        &#x20A6 ${mov}
+        <div class="transaction-value value-type-${type}">
+        ₦${Math.abs(mov)}
         </div>
       </div>
     `;
@@ -313,7 +338,7 @@ const displayNotification = function (acc, sort = false) {
     );
     const otherPartyName = otherPartyAccount
       ? otherPartyAccount.owner
-      : "Unknown";
+      : "Admin";
 
     const html = `
      <div class="notification-div">
@@ -321,11 +346,13 @@ const displayNotification = function (acc, sort = false) {
             <div class="notification-thmb notification-thmb--${type}"></div>
             <div class="notification-msg-cont">
               <p class="notification-msg">
-                you ${type === "deposit" ? "received" : "sent"} &#x20A6;
-                <span class="msg-amount">${mov}.00</span> ${
-      type === "deposit" ? "from" : "to"
-    }
+                ${type === "deposit" ? "you" : "Your"} ${
+      type === "deposit" ? "received" : "transfer"
+    } ${type === "deposit" ? "" : "of"} ₦<span class="msg-amount">${Math.abs(
+      mov
+    )}.00</span> ${type === "deposit" ? "from" : "to"}
                 <span class="notification-source">${otherPartyName}</span>
+                ${type === "deposit" ? "Successfully" : "was successfull"}
               </p>
               <p class="notification-time">1:20pm</p>
             </div>
@@ -353,21 +380,78 @@ sendMoneyBtn.addEventListener("click", function (e) {
   );
 
   const amount = Number(transferInput.value);
-  if (
-    amount > 0 &&
-    currentAccount.balance > 0 &&
-    receiverAcnt &&
-    currentAccount.balance >= amount &&
-    receiverAcnt.accountNumber !== currentAccount.accountNumber
-  ) {
-    currentAccount.transactions.push(-amount);
-    receiverAcnt.transactions.push(amount);
-
-    updateUi(currentAccount);
-    displayNotification(currentAccount);
-    console.log(`${amount} sent to ${receiverAcnt.owner}`);
+  if (!receiverAcnt) {
+    return showToast(
+      `<i class="fa-solid fa-circle-exclamation"></i> Recipient Account Number Does Not Exist, Check Account Number and Try Again`
+    );
   }
-  transferInput.value = recipientAccountNumber.value = "";
+  if (receiverAcnt) {
+    if (amount < 1) {
+      return showToast(
+        `<i class="fa-solid fa-circle-exclamation"></i> Please Enter A Valid Amount`
+      );
+    }
+    if (currentAccount.balance < 1 || currentAccount.balance < amount) {
+      return showToast(
+        `<i class="fa-solid fa-circle-exclamation"></i> You Don't have Sufficient Balance To Execute This Transaction, Fund Account and Try Again`
+      );
+    }
+    if (receiverAcnt.accountNumber === currentAccount.accountNumber) {
+      return showToast(
+        `<i class="fa-solid fa-circle-exclamation"></i> You can not send money to your own account`
+      );
+    }
+    if (
+      amount > 0 &&
+      currentAccount.balance > 0 &&
+      currentAccount.balance >= amount &&
+      receiverAcnt.accountNumber !== currentAccount.accountNumber
+    ) {
+      const confirmationCont = `<div class="confirmation-container">
+      <h3 class="confirmation-heading">Transfer</h3>
+      <p class="confirm-txt">Confirm Transction Details Below</p>
+      <div class="transfer-details-cont">
+    <div class="detail-row">
+      <p class="detail-title">Account Number</p>
+      <p class="detail">${recipientAccountNumber.value}</p>
+    </div>
+    <div class="detail-row">
+      <p class="detail-title">Recipient Name</p>
+      <p class="detail">${receiverAcnt.owner}</p>
+    </div>
+    <div class="detail-row">
+      <p class="detail-title">Amount</p>
+      <p class="detail">₦${amount}</p>
+    </div>
+      </div>
+      <button class="btn-confirm">Confirm</button>
+    </div>`;
+      pushNotification.insertAdjacentHTML("afterbegin", confirmationCont);
+      pushNotification.style.display = "flex";
+      const confirmButton = document.querySelector(".btn-confirm");
+      confirmButton.addEventListener("click", function () {
+        currentAccount.transactions.push(-amount);
+        receiverAcnt.transactions.push(amount);
+
+        updateUi(currentAccount);
+        displayNotification(currentAccount);
+        document.querySelector(".confirmation-container").style.display =
+          "none";
+        document.querySelector(".push-notificstion").style.display = "block";
+
+        pushMsg.textContent = `₦${amount} sent to ${receiverAcnt.owner}`;
+        // Set a timeout to hide the push notification after 6 seconds
+        setTimeout(() => {
+          document.querySelector(".push-notificstion").style.display = "none";
+          pushNotification.style.display = "none";
+          pushMsg.textContent = "";
+        }, 3000);
+      });
+    }
+
+    transferInput.value = "";
+    recipientAccountNumber.value = "";
+  }
 });
 
 // copy functionality
@@ -386,7 +470,9 @@ copyBtn.addEventListener("click", function () {
 
   // Copy the selected text to the clipboard
   document.execCommand("copy");
-
+  showToast(
+    `<i class="fa-solid fa-circle-exclamation success"></i> Account Number Copied Successfully`
+  );
   // Remove the temporary input element
   document.body.removeChild(tempInput);
 });
@@ -396,15 +482,46 @@ copyBtn.addEventListener("click", function () {
 loanBtn.addEventListener("click", function (e) {
   e.preventDefault();
   const amount = Number(loanInput.value);
+
+  if (amount < 1) {
+    return showToast(
+      `<i class="fa-solid fa-circle-exclamation"></i> Amount can't be less than 1`
+    );
+  }
+  if (amount > currentAccount.totalDeposit) {
+    return showToast(
+      `<i class="fa-solid fa-circle-exclamation"></i> Your loan amount is higher than your total deposit, try amount less than ₦${currentAccount.totalDeposit}`
+    );
+  }
+  if (amount > currentAccount.totalDeposit * 0.2) {
+    return showToast(
+      `<i class="fa-solid fa-circle-exclamation"></i> Amount is higher than your eligibility limt, you can only borrow 20% of your total deposit ₦${
+        currentAccount.totalDeposit * 0.2
+      }`
+    );
+  }
   if (
     amount > 0 &&
     currentAccount.transactions.some((mov) => mov >= amount * 0.1) &&
     amount < currentAccount.totalDeposit
   ) {
-    currentAccount.transactions.push(amount);
+    setTimeout(() => {
+      currentAccount.transactions.push(amount);
 
-    updateUi(currentAccount);
-    // inputLoanAmount.value = "";
+      updateUi(currentAccount);
+      // inputLoanAmount.value = "";
+      // document.querySelector(".confirmation-container").style.display = "none";
+      pushNotification.style.display = "flex";
+      document.querySelector(".push-notificstion").style.display = "block";
+
+      pushMsg.textContent = `Your loan request of ₦${amount} was succesful`;
+    }, 2000);
+
+    setTimeout(() => {
+      document.querySelector(".push-notificstion").style.display = "none";
+      pushNotification.style.display = "none";
+      pushMsg.textContent = "";
+    }, 5000);
     loanInput.value = "";
   }
 });

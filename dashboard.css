@@ -258,10 +258,10 @@ span.outcome-price {
   padding: 1rem 0;
   border-bottom: 2px solid #000;
 }
-.value-type-credit {
+.value-type-deposit {
   color: #00f262;
 }
-.value-type-debit {
+.value-type-withdrawal {
   color: rgba(255, 0, 0, 1);
 }
 .transaction--date {
@@ -335,6 +335,9 @@ span.outcome-price {
 .fund-desc,
 .fund-acnt {
   color: #688193;
+}
+.fund-acnt {
+  margin: 0.6rem 0;
 }
 .fund-inst h1 {
   display: flex;
@@ -564,13 +567,13 @@ svg {
   top: 0;
   position: fixed;
   z-index: 3500;
-  display: flex;
+  /* display: flex; */
   align-items: center;
   justify-content: center;
   text-align: center;
-  background-color: #fff;
+  background-color: #001f34;
   width: 40%;
-  height: 50vh;
+  height: 400px;
   top: 50%;
   left: 50%;
   border-radius: 10px;
@@ -588,11 +591,107 @@ svg {
   /* font-size: 0.6rem; */
   margin-bottom: 0.8rem;
 }
+.detail-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* background-color: #03243a; */
+  padding: 1rem 2rem;
+  border-bottom: 1px solid #000;
+  /* margin: 1rem 0; */
+}
+.push-notificstion {
+  display: none;
+}
+.confirmation-container {
+  width: 100%;
+}
+.confirm-txt {
+  margin: 0.8rem 0;
+}
+.btn-confirm {
+  background-color: #00bb4b;
+  outline: none;
+  padding: 0.8rem 2rem;
+  border: none;
+  border-radius: 4px;
+  color: rgb(237, 237, 237);
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 0.6rem;
+}
+.detail {
+  font-weight: bold;
+}
+.toast-box {
+  width: 500px;
+  position: fixed;
+  top: 100px;
+  left: 50%;
+  transform: translate(-50%);
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+  flex-direction: column;
+
+  /* padding: 20px 0; */
+}
+.toast {
+  width: 100%;
+  /* height: 80px; */
+  background-color: #001f34;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  color: #ffa500;
+  padding: 1rem;
+  position: relative;
+  transform: translateY(-100%);
+  animation: moveBottom 0.2s linear forwards;
+}
+.toast.success {
+  color: white;
+}
+.toast.success i {
+  color: #16e069;
+}
+.toast.success::after {
+  background-color: #16e069;
+}
+@keyframes moveBottom {
+  100% {
+    transform: translateY(0);
+  }
+}
+.toast i {
+  font-size: 30px;
+  margin-right: 10px;
+  color: #ffa500;
+}
+.toast::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  background: #ffa500;
+  width: 100%;
+  height: 5px;
+  animation: anim 4s linear forwards;
+}
+@keyframes anim {
+  100% {
+    width: 0;
+  }
+}
+/* .value-type-credit{
+  
+} */
 /* .push-notificstion {
   position: absolute;
   top: -50%;
   left: 50%;
-  transform: translatey(-50%);
+   padding: 1rem;
+;
 } */
 
 /* .push-notification {
@@ -844,5 +943,23 @@ svg {
   }
   .transaction-history-section h2 {
     font-size: 1rem;
+  }
+  .push-notificstion-cont {
+    width: 90%;
+    /* height: 30vh; */
+  }
+  .detail-row {
+    /* background-color: #03243a; */
+    padding: 1rem;
+    font-size: 0.8rem;
+    /* margin: 1rem 0; */
+  }
+  .confirmation-container h3 {
+    font-size: 1rem;
+  }
+  .toast-box {
+    width: 80%;
+    /* transform: translate(-45%); */
+    top: 70px;
   }
 }
