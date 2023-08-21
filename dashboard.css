@@ -42,8 +42,9 @@ input:focus {
   width: 30px;
 }
 .main-section {
-  display: flex;
+  /* display: flex; */
   padding-top: 5rem;
+  display: none;
 }
 .side-bar {
   padding-top: 2rem;
@@ -624,6 +625,7 @@ svg {
   font-weight: bold;
 }
 .toast-box {
+  z-index: 10000;
   width: 500px;
   position: fixed;
   top: 100px;
@@ -649,14 +651,21 @@ svg {
   transform: translateY(-100%);
   animation: moveBottom 0.2s linear forwards;
 }
-.toast.success {
+.toast.success,
+.toast.error {
   color: white;
 }
 .toast.success i {
   color: #16e069;
 }
+.toast.error i {
+  color: #ff0000;
+}
 .toast.success::after {
   background-color: #16e069;
+}
+.toast.error::after {
+  background-color: #ff0000;
 }
 @keyframes moveBottom {
   100% {
@@ -962,4 +971,10 @@ svg {
     /* transform: translate(-45%); */
     top: 70px;
   }
+  .toast-msg {
+    font-size: 0.8rem;
+  }
+  /* .toast i {
+    font-size: 25px;
+  } */
 }

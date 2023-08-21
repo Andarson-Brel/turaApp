@@ -368,6 +368,8 @@ a {
   display: none;
 }
 .loginst-span {
+  font-weight: 600;
+  cursor: pointer;
   color: #1aff88;
 }
 .close-img {
@@ -477,6 +479,14 @@ a {
 }
 
 @media (max-width: 650px) {
+  .features-heading,
+  .hero-head {
+    font-size: 1rem;
+  }
+  .hero-write-up,
+  .features-write-up {
+    margin: 1rem 0;
+  }
   .navbar,
   .hero,
   .sponsors,
@@ -506,7 +516,7 @@ a {
     margin-top: 2rem;
   }
   .security {
-    padding: 4rem 0;
+    padding: 2rem 0;
   }
   .content-img {
     width: 50px;
@@ -552,7 +562,7 @@ a {
     padding: 0.4rem 0.8rem;
   }
   .hero-description {
-    padding-top: 4rem;
+    padding-top: 2rem;
   }
   .hero-img {
     margin-top: 2rem;
@@ -570,6 +580,23 @@ a {
     color: #fa2a2a;
     display: none;
     font-size: 0.6rem;
+  }
+  .footer-line {
+    margin: 1rem 0 1rem;
+  }
+  .copyrights {
+    font-size: 0.6rem;
+  }
+  .address p,
+  .social a {
+    font-size: 0.8rem;
+  }
+  .address h4 {
+    font-size: 1rem;
+  }
+  .social a img {
+    margin-right: 0.6rem;
+    width: 20px;
   }
 }
 @media (max-width: 400px) {
@@ -596,12 +623,12 @@ a {
   .slideshow {
     height: 80px;
   }
-  .hero-head {
+  /* .hero-head {
     font-size: 1.6rem;
-  }
-  .hero-write-up {
+  } */
+  /* .hero-write-up {
     margin: 1.5rem 0;
-  }
+  } */
   .features-write-up,
   .hero-write-up {
     font-size: 0.8rem;

@@ -2,6 +2,7 @@
 
 const sideBarNav = document.querySelectorAll(".side-bar-nav");
 const pages = document.querySelectorAll(".page");
+const mainSection = document.querySelector(".main-section");
 const userImg = document.querySelector(".welcome-img");
 const labelBalance = document.querySelector(".balance");
 const accountNumberValue = document.querySelector(".account-number");
@@ -38,50 +39,57 @@ const pushNotification = document.querySelector(".push-notificstion-cont");
 const pushMsg = document.querySelector(".push-notif-msg");
 // const fundAccountNumber
 // const notificationIcon=document.querySelector('.notification-icon')
-let accountNumber;
-const account1 = {
-  email: "ab@g",
-  accountNumber: 123,
-  owner: "Jonas Schmedtmann",
+export let currentAccount;
+export let accounts = [];
+const storedAccounts = localStorage.getItem("accounts");
+if (storedAccounts) {
+  accounts = JSON.parse(storedAccounts);
+}
 
-  transactions: [],
+// let accountNumber;
+const account1 = {
+  email: "andarsonbrel2@gmail.com",
+  accountNumber: 7049030487,
+  owner: "Innocent Daniel",
+
+  transactions: [1000000],
   interestRate: 1.2, // %
   pin: 1111,
 };
-
-const account2 = {
-  email: "ac@g",
-  accountNumber: 124,
-  owner: "Jessica Davis",
-
-  transactions: [],
-  interestRate: 1.5,
-  pin: 2222,
-};
-
-const account3 = {
-  email: "ad@g",
-  accountNumber: 125,
-  owner: "Steven Thomas Williams",
-
-  transactions: [],
-  interestRate: 0.7,
-  pin: 3333,
-};
-
-const account4 = {
-  email: "ae@g",
-  accountNumber: 126,
-  owner: "Sarah Smith",
-
-  transactions: [430, 1000, 700, 50, -90],
-  interestRate: 1,
-  pin: 4444,
-};
-
-const accounts = [account1, account2, account3, account4];
+accounts.push(account1);
 // console.log(accounts);
-// console.log(accounts);
+
+// const account2 = {
+//   email: "ac@g",
+//   accountNumber: 124,
+//   owner: "Jessica Davis",
+
+//   transactions: [],
+//   interestRate: 1.5,
+//   pin: 2222,
+// };
+
+// const account3 = {
+//   email: "ad@g",
+//   accountNumber: 125,
+//   owner: "Steven Thomas Williams",
+
+//   transactions: [],
+//   interestRate: 0.7,
+//   pin: 3333,
+// };
+
+// const account4 = {
+//   email: "ae@g",
+//   accountNumber: 126,
+//   owner: "Sarah Smith",
+
+//   transactions: [430, 1000, 700, 50, 90, 5000, 1000000],
+//   interestRate: 1,
+//   pin: 4444,
+// };
+
+// const accounts = [account1, account2, account3, account4];
 
 // ========================================================NAVIGATION FUNCTION===================================================================
 // date function
@@ -93,8 +101,6 @@ function getFormattedDate(date) {
 }
 
 const today = new Date();
-
-// console.log(formattedDate); // Output: 08/13/2023 (for today's date)
 
 const toggleNotification = function () {
   notificationContainer.classList.toggle("hidden");
@@ -113,12 +119,25 @@ function togglePages(index) {
 const navigation = function () {
   sideBarNav.forEach((navBtn, index) => {
     navBtn.addEventListener("click", function () {
+      // console.log(index);
       // When any button is clicked, remove "side-nav-active" from all buttons
       sideBarNav.forEach((btn) => btn.classList.remove("side-nav-active"));
 
       // Add "side-nav-active" to the clicked button
       navBtn.classList.add("side-nav-active");
+      btmNavTitle.forEach((btmNavTitle) =>
+        btmNavTitle.classList.remove("btm-nav-title-active")
+      );
 
+      btmIconActive.forEach((btn) => {
+        btn.style.display = "none";
+      });
+      btmIconInactive.forEach((inactiveBtn) => {
+        inactiveBtn.style.display = "block";
+      });
+      btmIconInactive[index].style.display = "none";
+      btmIconActive[index].style.display = "block";
+      btmNavTitle[index].classList.add("btm-nav-title-active");
       // change active page
       togglePages(index);
     });
@@ -139,8 +158,6 @@ const navigation = function () {
       transactionBtns[index].style.backgroundColor = "#16E069";
       transactionBtns[index].style.color = "white";
       // Update the focusedInputIndex variable
-      focusedInputIndex = index;
-      console.log(transactionBtns[index]);
     })
   );
   transactionInputs.forEach((input, index) =>
@@ -164,7 +181,10 @@ const navigation = function () {
       btmIconInactive[index].style.display = "none";
       btmIconActive[index].style.display = "block";
       btmNavTitle[index].classList.add("btm-nav-title-active");
-      // console.log(btmNavTitle[index]);
+      sideBarNav.forEach((btn) => btn.classList.remove("side-nav-active"));
+
+      // Add "side-nav-active" to the clicked button
+      sideBarNav[index].classList.add("side-nav-active");
       togglePages(index);
     });
   });
@@ -185,6 +205,23 @@ const navigation = function () {
     });
 
     tab.addEventListener("click", function () {
+      btmNavTitle.forEach((btmNavTitle) =>
+        btmNavTitle.classList.remove("btm-nav-title-active")
+      );
+
+      btmIconActive.forEach((btn) => {
+        btn.style.display = "none";
+      });
+      btmIconInactive.forEach((inactiveBtn) => {
+        inactiveBtn.style.display = "block";
+      });
+      btmIconInactive[index + 1].style.display = "none";
+      btmIconActive[index + 1].style.display = "block";
+      btmNavTitle[index + 1].classList.add("btm-nav-title-active");
+      sideBarNav.forEach((btn) => btn.classList.remove("side-nav-active"));
+
+      // Add "side-nav-active" to the clicked button
+      sideBarNav[index + 1].classList.add("side-nav-active");
       togglePages(index + 1);
     });
   });
@@ -199,10 +236,46 @@ const showToast = function (msg) {
   if (msg.includes("Successfully")) {
     toast.classList.add("success");
   }
+  if (msg.includes("Wrong")) {
+    toast.classList.add("error");
+  }
   setTimeout(() => {
     toast.remove();
   }, 4000);
 };
+function formatLargeNumber(number) {
+  // Convert the number to a string
+  let numStr = String(number);
+
+  // Determine the length of the string
+  let length = numStr.length;
+
+  // Calculate the number of commas needed
+  let numCommas = Math.floor((length - 1) / 3);
+
+  // Initialize the formatted string
+  let formattedStr = "";
+
+  // Calculate the number of digits after the last comma
+  let lastGroupDigits = length % 3;
+  if (lastGroupDigits === 0) {
+    lastGroupDigits = 3;
+  }
+
+  // Add the digits after the last comma
+  formattedStr += numStr.substr(0, lastGroupDigits);
+
+  // Iterate over the remaining characters and add commas
+  for (let i = lastGroupDigits; i < length; i++) {
+    if ((i - lastGroupDigits) % 3 === 0) {
+      formattedStr += ",";
+    }
+    formattedStr += numStr[i];
+  }
+
+  return formattedStr;
+}
+
 // ============================LOGIN=========================================================
 const loginModal = document.querySelector(".login");
 const inputLoginEmail = document.querySelector(".login-email");
@@ -218,16 +291,32 @@ const closeLogin = function () {
 profileIcon.addEventListener("click", closeLogin);
 document.querySelector(".close-img").addEventListener("click", closeLogin);
 
-let currentAccount;
+// let currentAccount;
 loginBtn.addEventListener("click", function (e) {
   navigation();
   togglePages(0);
   e.preventDefault();
+
   currentAccount = accounts.find((acc) => {
     return acc.email === inputLoginEmail.value.toLowerCase();
   });
-
-  if (currentAccount?.pin === Number(inputLoginPassword.value)) {
+  // console.log(currentAccount);
+  if (
+    !currentAccount ||
+    currentAccount.pin != Number(inputLoginPassword.value)
+  ) {
+    showToast(
+      `<i class="fa-solid fa-circle-exclamation"></i> <p class="toast-msg">Wrong Email or Password</p>`
+    );
+    inputLoginEmail.style.border = "1px solid #FF0000";
+    inputLoginPassword.style.border = "1px solid #FF0000";
+    inputLoginEmail.style.color = "#FF0000";
+    inputLoginPassword.style.color = "#FF0000";
+  }
+  // console.log(Number(inputLoginPassword.value), currentAccount.pin);
+  if (currentAccount.pin === Number(inputLoginPassword.value)) {
+    // console.log(currentAccount);
+    // console.log(currentAccount.pin);
     // const accountNumber = (Date.now() + "").slice(-10);
     // currentAccount.accountNumber = accountNumber;
     userNAme.textContent = currentAccount.owner.split(" ")[0];
@@ -238,9 +327,8 @@ loginBtn.addEventListener("click", function (e) {
     printBalance(currentAccount);
     calcDisplaySummary(currentAccount);
     dateTxt.textContent = getFormattedDate(today);
-    // console.log(currentAccount);
-  } else {
-    console.log("Account not found.");
+    // closeLogin();
+    mainSection.style.display = "flex";
   }
 });
 
@@ -265,7 +353,7 @@ const calcDisplaySummary = function (acc) {
     })
     .reduce((acm, curr) => acm + curr, 0);
   acc.totalDeposit = totalDeposit;
-  incomePrice.textContent = `${totalDeposit}`;
+  incomePrice.textContent = `${formatLargeNumber(totalDeposit)}`;
 
   // TOTAL WITHDRAWAL
 
@@ -275,7 +363,7 @@ const calcDisplaySummary = function (acc) {
     })
     .reduce((acm, curr) => acm + curr, 0);
 
-  outcomePrice.textContent = `${Math.abs(totalWithdrawal)}`;
+  outcomePrice.textContent = `${formatLargeNumber(Math.abs(totalWithdrawal))}`;
 
   // INTEREST
 
@@ -286,7 +374,6 @@ const calcDisplaySummary = function (acc) {
   //   .filter(int => int >= 1)
   //   .reduce((acm, curr) => acm + curr, 0);
   // labelSumInterest.textContent = `${interest}€`;
-  // return console.log(totalDeposit);
 };
 
 // updating transaction history
@@ -315,7 +402,7 @@ const displayTransaction = function (acc, sort = false) {
           <div class="transaction--date">3 days ago</div>
         </div>
         <div class="transaction-value value-type-${type}">
-        ₦${Math.abs(mov)}
+        ₦${formatLargeNumber(Math.abs(mov))}
         </div>
       </div>
     `;
@@ -348,9 +435,11 @@ const displayNotification = function (acc, sort = false) {
               <p class="notification-msg">
                 ${type === "deposit" ? "you" : "Your"} ${
       type === "deposit" ? "received" : "transfer"
-    } ${type === "deposit" ? "" : "of"} ₦<span class="msg-amount">${Math.abs(
-      mov
-    )}.00</span> ${type === "deposit" ? "from" : "to"}
+    } ${
+      type === "deposit" ? "" : "of"
+    } ₦<span class="msg-amount">${formatLargeNumber(Math.abs(mov))}.00</span> ${
+      type === "deposit" ? "from" : "to"
+    }
                 <span class="notification-source">${otherPartyName}</span>
                 ${type === "deposit" ? "Successfully" : "was successfull"}
               </p>
@@ -370,7 +459,7 @@ const printBalance = function (acc) {
     return acm + cur;
   }, 0);
   acc.balance = balance;
-  labelBalance.textContent = `${acc.balance}`;
+  labelBalance.textContent = `${formatLargeNumber(acc.balance)}`;
 };
 
 sendMoneyBtn.addEventListener("click", function (e) {
@@ -382,23 +471,23 @@ sendMoneyBtn.addEventListener("click", function (e) {
   const amount = Number(transferInput.value);
   if (!receiverAcnt) {
     return showToast(
-      `<i class="fa-solid fa-circle-exclamation"></i> Recipient Account Number Does Not Exist, Check Account Number and Try Again`
+      `<i class="fa-solid fa-circle-exclamation"></i><p class="toast-msg"> Recipient Account Number Does Not Exist, Check Account Number and Try Again</p>`
     );
   }
   if (receiverAcnt) {
     if (amount < 1) {
       return showToast(
-        `<i class="fa-solid fa-circle-exclamation"></i> Please Enter A Valid Amount`
+        `<i class="fa-solid fa-circle-exclamation"></i> <p class="toast-msg">Please Enter A Valid Amount</p>`
       );
     }
     if (currentAccount.balance < 1 || currentAccount.balance < amount) {
       return showToast(
-        `<i class="fa-solid fa-circle-exclamation"></i> You Don't have Sufficient Balance To Execute This Transaction, Fund Account and Try Again`
+        `<i class="fa-solid fa-circle-exclamation"></i> <p class="toast-msg">You Don't have Sufficient Balance To Execute This Transaction, Fund Account and Try Again</p>`
       );
     }
     if (receiverAcnt.accountNumber === currentAccount.accountNumber) {
       return showToast(
-        `<i class="fa-solid fa-circle-exclamation"></i> You can not send money to your own account`
+        `<i class="fa-solid fa-circle-exclamation"></i> <p class="toast-msg">You can not send money to your own account</p>`
       );
     }
     if (
@@ -421,7 +510,7 @@ sendMoneyBtn.addEventListener("click", function (e) {
     </div>
     <div class="detail-row">
       <p class="detail-title">Amount</p>
-      <p class="detail">₦${amount}</p>
+      <p class="detail">₦${formatLargeNumber(amount)}</p>
     </div>
       </div>
       <button class="btn-confirm">Confirm</button>
@@ -439,13 +528,16 @@ sendMoneyBtn.addEventListener("click", function (e) {
           "none";
         document.querySelector(".push-notificstion").style.display = "block";
 
-        pushMsg.textContent = `₦${amount} sent to ${receiverAcnt.owner}`;
+        pushMsg.textContent = `₦${formatLargeNumber(amount)} sent to ${
+          receiverAcnt.owner
+        }`;
         // Set a timeout to hide the push notification after 6 seconds
         setTimeout(() => {
           document.querySelector(".push-notificstion").style.display = "none";
           pushNotification.style.display = "none";
           pushMsg.textContent = "";
         }, 3000);
+        localStorage.setItem("accounts", JSON.stringify(accounts));
       });
     }
 
@@ -471,7 +563,7 @@ copyBtn.addEventListener("click", function () {
   // Copy the selected text to the clipboard
   document.execCommand("copy");
   showToast(
-    `<i class="fa-solid fa-circle-exclamation success"></i> Account Number Copied Successfully`
+    `<i class="fa-solid fa-circle-exclamation success"></i><p class="toast-msg"> Account Number Copied Successfully</p>`
   );
   // Remove the temporary input element
   document.body.removeChild(tempInput);
@@ -482,22 +574,28 @@ copyBtn.addEventListener("click", function () {
 loanBtn.addEventListener("click", function (e) {
   e.preventDefault();
   const amount = Number(loanInput.value);
-
+  if (currentAccount.totalDeposit === 0) {
+    return showToast(
+      `<i class="fa-solid fa-circle-exclamation"></i><p class="toast-msg"> You Are Not Eligible for a Loan, Make Deposits To Qualify</p>`
+    );
+  }
   if (amount < 1) {
     return showToast(
-      `<i class="fa-solid fa-circle-exclamation"></i> Amount can't be less than 1`
+      `<i class="fa-solid fa-circle-exclamation"></i><p class="toast-msg"> Amount can't be less than 1</p>`
     );
   }
   if (amount > currentAccount.totalDeposit) {
     return showToast(
-      `<i class="fa-solid fa-circle-exclamation"></i> Your loan amount is higher than your total deposit, try amount less than ₦${currentAccount.totalDeposit}`
+      `<i class="fa-solid fa-circle-exclamation"></i> <p class="toast-msg">Your loan amount is higher than your total deposit, try amount less than ₦${formatLargeNumber(
+        currentAccount.totalDeposit
+      )}</p>`
     );
   }
   if (amount > currentAccount.totalDeposit * 0.2) {
     return showToast(
-      `<i class="fa-solid fa-circle-exclamation"></i> Amount is higher than your eligibility limt, you can only borrow 20% of your total deposit ₦${
+      `<i class="fa-solid fa-circle-exclamation"></i> <p class="toast-msg">Amount is higher than your eligibility limt, you can only borrow 20% of your total deposit ₦${formatLargeNumber(
         currentAccount.totalDeposit * 0.2
-      }`
+      )}</p>`
     );
   }
   if (
@@ -506,16 +604,16 @@ loanBtn.addEventListener("click", function (e) {
     amount < currentAccount.totalDeposit
   ) {
     setTimeout(() => {
-      currentAccount.transactions.push(amount);
-
-      updateUi(currentAccount);
       // inputLoanAmount.value = "";
       // document.querySelector(".confirmation-container").style.display = "none";
       pushNotification.style.display = "flex";
       document.querySelector(".push-notificstion").style.display = "block";
 
-      pushMsg.textContent = `Your loan request of ₦${amount} was succesful`;
-    }, 2000);
+      pushMsg.textContent = `Your loan request of ₦${formatLargeNumber(
+        amount
+      )} was succesful`;
+      localStorage.setItem("accounts", JSON.stringify(accounts));
+    }, 500);
 
     setTimeout(() => {
       document.querySelector(".push-notificstion").style.display = "none";
@@ -523,6 +621,13 @@ loanBtn.addEventListener("click", function (e) {
       pushMsg.textContent = "";
     }, 5000);
     loanInput.value = "";
+
+    setTimeout(() => {
+      currentAccount.transactions.push(amount);
+
+      updateUi(currentAccount);
+      localStorage.setItem("accounts", JSON.stringify(accounts));
+    }, 8000);
   }
 });
 
