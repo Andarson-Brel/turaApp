@@ -147,13 +147,22 @@ function validateForm(email, passWord, firstName, lastName) {
 
   return valid;
 }
+function convertToTitleCase(inputval) {
+  var words = inputval.split(" ");
+  for (var i = 0; i < words.length; i++) {
+    words[i] = words[i].charAt(0).toUpperCase() + words[i].slice(1);
+  }
+  return words.join(" ");
+}
 
 signupSubmit.addEventListener("click", function (e) {
   e.preventDefault();
   const email = inputSignupEmail.value;
-  const firstName = inputFirstName.value;
-  const lastName = inputLastName.value;
+  const firstName = convertToTitleCase(inputFirstName.value);
+  const lastName = convertToTitleCase(inputLastName.value);
   const passWord = inputSignupPassword.value;
+  const owner = `${firstName} ${lastName}`;
+  // console.log(owner);
   if (validateForm(email, passWord, firstName, lastName)) {
     createUserWithEmailAndPassword(auth, email, passWord)
       .then((credential) => {
@@ -165,7 +174,7 @@ signupSubmit.addEventListener("click", function (e) {
           transactions: [],
           totalDeposit: 0,
           balance: 0,
-          owner: `${firstName} ${lastName}`,
+          owner: owner,
           accountNumber: Number((Date.now() + "").slice(-10)),
         }).then(() => {
           signUpform.reset();
