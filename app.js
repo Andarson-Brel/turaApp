@@ -476,6 +476,9 @@ onAuthStateChanged(auth, (user) => {
                       transferInput.value = "";
                       recipientAccountNumber.value = "";
                     })
+                    .then((test) => {
+                      console.log(test);
+                    })
                     .catch((error) => {
                       // Handle error while updating sender's data
                     });
@@ -623,27 +626,22 @@ onAuthStateChanged(auth, (user) => {
 // displayMovement
 const displayTransaction = function (user, sort = false) {
   const colRef = collection(db, "users");
-  console.log(colRef);
   const docRef = doc(colRef, user.uid);
   getDoc(docRef).then((doc) => {
-    transactionHistoryCont.innerHTML = "";
-    const transactions = doc.data().transactions;
-    const balance = transactions.reduce((acm, cur) => acm + cur, 0);
-    const totalDeposit = transactions
-      .filter((mov) => {
-        return mov > 0;
-      })
-      .reduce((acm, curr) => acm + curr, 0);
-
-    updateDoc(docRef, { balance: balance, totalDeposit: totalDeposit });
+    notificationContainer2.innerHTML = "";
     const movs = sort
-      ? acc.transactions.slice().sort((a, b) => a - b)
+      ? doc
+          .data()
+          .transactions.slice()
+          .sort((a, b) => a - b)
       : doc.data().transactions;
     movs.forEach((mov, i) => {
       const type = mov > 0 ? "deposit" : "withdrawal";
-      const otherPartyAccountPromise = findOtherPartyAccount(mov);
-      // other party details
 
+      // Find the other party's account in Firestore based on the transaction amount
+      const otherPartyAccountPromise = findOtherPartyAccount(mov);
+
+      // Use Promise to wait for the other party's account to be found
       otherPartyAccountPromise.then((otherPartyAccount) => {
         const otherPartyName = otherPartyAccount
           ? otherPartyAccount.owner
