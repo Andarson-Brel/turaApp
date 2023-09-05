@@ -1,4 +1,40 @@
 "use strict";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-app.js";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signOut,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+} from "https://www.gstatic.com/firebasejs/10.3.0/firebase-auth.js";
+import {
+  getFirestore,
+  collection,
+  onSnapshot,
+  doc,
+  addDoc,
+  deleteDoc,
+  updateDoc,
+  setDoc,
+  getDoc,
+} from "https://www.gstatic.com/firebasejs/10.3.0/firebase-firestore.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyAr48_kpmT-W63JxukixljckWNHg3KxV4M",
+  authDomain: "tura-bank.firebaseapp.com",
+  databaseURL:
+    "https://tura-bank-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "tura-bank",
+  storageBucket: "tura-bank.appspot.com",
+  messagingSenderId: "106185755291",
+  appId: "1:106185755291:web:57cdee3b12de5774b1943e",
+  measurementId: "G-CM591N3G8J",
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth();
+const db = getFirestore(app);
+const colRef = collection(db, "guides");
 // =======================================================APP/JSSELECTOR
 // =========================================SELECTORS==========================================
 
@@ -10,6 +46,7 @@ const loginSubmit = document.querySelector(".login-submit");
 const signupSubmit = document.querySelector(".sign-up-submit");
 const closeModalicon = document.querySelectorAll(".close-img");
 const loginSpan = document.querySelector(".loginst-span");
+const signUpform = document.querySelector(".sign-up-form");
 ////////////////////////////////// // Get references to all input fields and error message elements
 /////////////////////////////////////
 const inputSignupEmail = document.querySelector(".sign-up-email");
@@ -26,30 +63,6 @@ const errorMsgemail = document.querySelector(".error-msg-email");
 const errorMsgPassword = document.querySelector(".error-msg-password");
 const errorMsgLastname = document.querySelector(".error-msg-lastname");
 const errorMsgfirstname = document.querySelector(".error-msg-firstname");
-// =======================================================class================================================================
-class account {
-  constructor(emailAddress, firstName, Lastname, passWord, transactions) {
-    this.accountNumber = Number((Date.now() + "").slice(-10));
-    this.email = emailAddress;
-    this.owner = `${firstName} ${Lastname}`;
-    this.firstName = firstName;
-    this.Lastname = Lastname;
-    this.pin = Number(passWord);
-    this.transactions = transactions;
-  }
-}
-let currentAccount;
-let accounts = [];
-// Retrieve existing accounts from localStorage if available
-const storedAccounts = localStorage.getItem("accounts");
-if (storedAccounts) {
-  accounts = JSON.parse(storedAccounts);
-}
-// import { currentAccount, accounts } from "./app.js";
-
-// Use the currentAccount object
-// console.log(currentAccount); // Access the shared data
-
 // ==============================================FUNCTIONS=====================================================
 const closeModal = function (e) {
   //   e.preventDefault();
@@ -94,166 +107,104 @@ document.addEventListener("keydown", function (e) {
 });
 
 //================================================== form validation============================================
-const validRegex =
-  /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-
-// Add an input event listener to the inputSignupEmail field
-inputSignupEmail.addEventListener("input", function () {
-  if (!inputSignupEmail.value.match(validRegex)) {
-    errorMsgemail.style.display = "block";
-    errorMsgemail.textContent = "Email Not correct";
-  } else {
-    errorMsgemail.style.display = "none";
-  }
-});
-function validateFunction() {
-  let isValid = true; // Assume the form is valid initially
-  if (
-    (currentAccount = accounts.find((acc) => {
-      return acc.email === inputSignupEmail.value.toLowerCase();
-    }))
-  ) {
-    errorMsgemail.style.display = "block";
-    errorMsgemail.textContent =
-      "Email Address is Already Registeered to Another Account";
-    isValid = false;
-  }
-  // Validate Email
-  if (!inputSignupEmail.value.match(validRegex)) {
-    errorMsgemail.style.display = "block";
-    errorMsgemail.textContent = "Email Not correct";
-    isValid = false;
-  } else {
-    errorMsgemail.style.display = "none";
-  }
-
-  // Validate First Name
-  if (inputFirstName.value === "") {
-    errorMsgfirstname.style.display = "block";
-    errorMsgfirstname.textContent = "Field can't be blank";
-    isValid = false;
-  } else {
-    errorMsgfirstname.style.display = "none";
-  }
-
-  // Validate Last Name
-  if (inputLastName.value === "") {
-    errorMsgLastname.style.display = "block";
-    errorMsgLastname.textContent = "Field can't be blank";
-    isValid = false;
-  } else {
-    errorMsgLastname.style.display = "none";
-  }
-
-  // Validate Password
-  if (inputSignupPassword.value === "") {
+//
+function validateForm(email, passWord, firstName, lastName) {
+  let valid = true;
+  if (!passWord) {
     errorMsgPassword.style.display = "block";
-    errorMsgPassword.textContent = "Field can't be blank";
-    isValid = false;
+    errorMsgPassword.textContent = "Password Field is Empty";
+    inputSignupPassword.style.border = "1px solid #FF0000";
   } else {
     errorMsgPassword.style.display = "none";
+    inputSignupPassword.style.border = "none";
   }
-
-  return isValid; // Return the validation status
-}
-
-// Add an input event listener to the inputSignupEmail field
-inputSignupEmail.addEventListener("input", function () {
-  if (!inputSignupEmail.value.match(validRegex)) {
+  if (!email) {
     errorMsgemail.style.display = "block";
-    errorMsgemail.textContent = "Email Not correct";
+    errorMsgemail.textContent = "Email Can't Be Blank";
+    inputSignupEmail.style.border = "1px solid #FF0000";
   } else {
     errorMsgemail.style.display = "none";
+    inputSignupEmail.style.border = "none";
   }
-});
+  if (!firstName) {
+    errorMsgfirstname.style.display = "block";
+    errorMsgfirstname.textContent = "First Name Can't be Blank";
+    inputFirstName.style.border = "1px solid #FF0000";
+    valid = false;
+  } else {
+    errorMsgfirstname.style.display = "none";
+    inputFirstName.style.border = "none";
+  }
+  if (!lastName) {
+    errorMsgLastname.style.display = "block";
+    errorMsgLastname.textContent = "Last Name Can't be Blank";
+    inputLastName.style.border = "1px solid #FF0000";
+    valid = false;
+  } else {
+    errorMsgLastname.style.display = "none";
+    inputLastName.style.border = "none";
+  }
 
-// Keep the click event listener for the signupSubmit button
-// signupSubmit.addEventListener("click", function (e) {
-//   e.preventDefault();
+  return valid;
+}
 
-//   const isValid = validateFunction(); // Validate the form
-
-//   if (isValid) {
-//     // If all validations pass, create a new account object with the input values
-//     const emailAddress = inputSignupEmail.value;
-//     const firstName = inputFirstName.value;
-//     const lastName = inputLastName.value;
-//     const passWord = inputSignupPassword.value;
-
-//     // Create a new account object
-//     const newAccount = new account(
-//       emailAddress,
-//       firstName,
-//       lastName,
-//       passWord,
-//       []
-//     );
-//     // Push the new account object into the accounts array
-//     accounts.push(newAccount);
-
-//     // Store the updated accounts array in localStorage
-
-//     localStorage.setItem("accounts", JSON.stringify(accounts));
-//     // Do something with the newAccount object, e.g., store it in an array or send it to a server.
-//     console.log("New Account Object:", newAccount, console.log(accounts));
-
-//     // Redirect to the account.html page
-//     window.location.href = "account.html";
-//   } else {
-//     // If any validation fails, do not proceed with creating the account.
-//     console.log("Form validation failed. Please check your input fields.");
-//   }
-// });
-// ... (previous code)
-
-// Keep the click event listener for the signupSubmit button
 signupSubmit.addEventListener("click", function (e) {
   e.preventDefault();
-
-  const isValid = validateFunction(); // Validate the form
-  // Check if the email already exists
-  if (
-    accounts.some((acc) => acc.email === inputSignupEmail.value.toLowerCase())
-  ) {
-    errorMsgemail.style.display = "block";
-    errorMsgemail.textContent =
-      "Email Address is Already Registered to Another Account";
-    console.log("Email Address is Already Registered to Another Account");
-    // return; // Exit early if email already exists
-  }
-  if (isValid) {
-    // If all validations pass and the email is not already registered
-    const emailAddress = inputSignupEmail.value;
-    const firstName = inputFirstName.value;
-    const lastName = inputLastName.value;
-    const passWord = inputSignupPassword.value;
-
-    // Create a new account object
-    const newAccount = new account(
-      emailAddress,
-      firstName,
-      lastName,
-      passWord,
-      []
-    );
-    // Push the new account object into the accounts array
-    accounts.push(newAccount);
-
-    // Store the updated accounts array in localStorage
-    localStorage.setItem("accounts", JSON.stringify(accounts));
-
-    // Redirect to the account.html page
-    window.location.href = "account.html";
-  } else {
-    // If any validation fails, do not proceed with creating the account.
-    console.log("Form validation failed. Please check your input fields.");
+  const email = inputSignupEmail.value;
+  const firstName = inputFirstName.value;
+  const lastName = inputLastName.value;
+  const passWord = inputSignupPassword.value;
+  if (validateForm(email, passWord, firstName, lastName)) {
+    createUserWithEmailAndPassword(auth, email, passWord)
+      .then((credential) => {
+        const colRef = collection(db, "users");
+        const docRef = doc(colRef, credential.user.uid);
+        return setDoc(docRef, {
+          firstName: firstName,
+          lastName: lastName,
+          transactions: [],
+          totalDeposit: 0,
+          balance: 0,
+          owner: `${firstName} ${lastName}`,
+          accountNumber: Number((Date.now() + "").slice(-10)),
+        }).then(() => {
+          signUpform.reset();
+        });
+      })
+      .catch((error) => {
+        console.log(error.code);
+        if (error.code === "auth/email-already-in-use") {
+          errorMsgemail.style.display = "block";
+          errorMsgemail.textContent = "Email has already been registered";
+          inputSignupEmail.style.border = "1px solid #FF0000";
+        } else {
+          errorMsgemail.style.display = "none";
+          inputSignupEmail.style.border = "none";
+        }
+        if (error.code.includes("auth/invalid-email")) {
+          errorMsgemail.style.display = "block";
+          errorMsgemail.textContent = "Email is invalid";
+          inputSignupEmail.style.border = "1px solid #FF0000";
+        } else {
+          errorMsgemail.style.display = "none";
+          inputSignupEmail.style.border = "none";
+        }
+        if (error.code.includes("auth/missing-password")) {
+          errorMsgPassword.style.display = "block";
+          errorMsgPassword.textContent = "Password Field is Empty";
+          inputSignupPassword.style.border = "1px solid #FF0000";
+        } else {
+          errorMsgPassword.style.display = "none";
+          inputSignupPassword.style.border = "none";
+        }
+        if (error.code.includes("auth/weak-password")) {
+          errorMsgPassword.style.display = "block";
+          errorMsgPassword.textContent = "Password Must Be Atleast 6 Values";
+          inputSignupPassword.style.border = "1px solid #FF0000";
+        } else {
+          errorMsgPassword.style.display = "none";
+          inputSignupPassword.style.border = "none";
+        }
+      });
   }
 });
-
-// ... (rest of the code)
-
-// let currentAccount;
-
-// console.log(currentAccount, accounts);
-// export default accounts;
-// window.myApp = { accounts };

@@ -1,4 +1,45 @@
 "use strict";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-app.js";
+import {
+  getAuth,
+  signOut,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+} from "https://www.gstatic.com/firebasejs/10.3.0/firebase-auth.js";
+import {
+  getFirestore,
+  collection,
+  onSnapshot,
+  doc,
+  addDoc,
+  deleteDoc,
+  updateDoc,
+  setDoc,
+  getDoc,
+  arrayUnion,
+  arrayRemove,
+  query,
+  where,
+  getDocs,
+} from "https://www.gstatic.com/firebasejs/10.3.0/firebase-firestore.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyAr48_kpmT-W63JxukixljckWNHg3KxV4M",
+  authDomain: "tura-bank.firebaseapp.com",
+  databaseURL:
+    "https://tura-bank-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "tura-bank",
+  storageBucket: "tura-bank.appspot.com",
+  messagingSenderId: "106185755291",
+  appId: "1:106185755291:web:57cdee3b12de5774b1943e",
+  measurementId: "G-CM591N3G8J",
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth();
+const db = getFirestore(app);
+// const colRef = collection(db, "guides");
+//
 
 const sideBarNav = document.querySelectorAll(".side-bar-nav");
 const pages = document.querySelectorAll(".page");
@@ -21,6 +62,8 @@ const loanInput = document.getElementById("loan-input");
 const loanBtn = document.querySelector(".apply");
 const fundAccountNumber = document.querySelector(".fund-acnt-nmb");
 const copyBtn = document.querySelector(".copy-btn");
+const errorMsgemail = document.querySelector(".error-msg-email");
+const errorMsgPassword = document.querySelector(".error-msg-password");
 const bottomNav = document.querySelector(".botton-nav");
 const btmNavItem = document.querySelectorAll(".btm-nav-item");
 const btmIconInactive = document.querySelectorAll(`.btm-nav-img`);
@@ -33,63 +76,14 @@ const transactionHistoryCont = document.querySelector(".transaction-history");
 const notificationContainer2 = document.querySelector(
   ".notification-container"
 );
+const modalHead = document.querySelector(".modal__header");
+const modalDes = document.querySelector(".modal-desc");
+const logOutBtn = document.querySelector(".login-out");
 const transactionInputs = document.querySelectorAll(".transaction-input");
 const transactionBtns = document.querySelectorAll(".transaction-btn");
 const pushNotification = document.querySelector(".push-notificstion-cont");
 const pushMsg = document.querySelector(".push-notif-msg");
-// const fundAccountNumber
-// const notificationIcon=document.querySelector('.notification-icon')
-export let currentAccount;
-export let accounts = [];
-const storedAccounts = localStorage.getItem("accounts");
-if (storedAccounts) {
-  accounts = JSON.parse(storedAccounts);
-}
-
-// let accountNumber;
-const account1 = {
-  email: "andarsonbrel2@gmail.com",
-  accountNumber: 7049030487,
-  owner: "Innocent Daniel",
-
-  transactions: [1000000],
-  interestRate: 1.2, // %
-  pin: 1111,
-};
-accounts.push(account1);
-// console.log(accounts);
-
-// const account2 = {
-//   email: "ac@g",
-//   accountNumber: 124,
-//   owner: "Jessica Davis",
-
-//   transactions: [],
-//   interestRate: 1.5,
-//   pin: 2222,
-// };
-
-// const account3 = {
-//   email: "ad@g",
-//   accountNumber: 125,
-//   owner: "Steven Thomas Williams",
-
-//   transactions: [],
-//   interestRate: 0.7,
-//   pin: 3333,
-// };
-
-// const account4 = {
-//   email: "ae@g",
-//   accountNumber: 126,
-//   owner: "Sarah Smith",
-
-//   transactions: [430, 1000, 700, 50, 90, 5000, 1000000],
-//   interestRate: 1,
-//   pin: 4444,
-// };
-
-// const accounts = [account1, account2, account3, account4];
+const signInFotm = document.querySelector(".sign-in-form");
 
 // ========================================================NAVIGATION FUNCTION===================================================================
 // date function
@@ -97,7 +91,7 @@ function getFormattedDate(date) {
   const year = date.getFullYear();
   const month = (date.getMonth() + 1).toString().padStart(2, "0");
   const day = date.getDate().toString().padStart(2, "0");
-  return `${month}/${day}/${year}`;
+  return `${day}/${month}/${year}`;
 }
 
 const today = new Date();
@@ -119,7 +113,6 @@ function togglePages(index) {
 const navigation = function () {
   sideBarNav.forEach((navBtn, index) => {
     navBtn.addEventListener("click", function () {
-      // console.log(index);
       // When any button is clicked, remove "side-nav-active" from all buttons
       sideBarNav.forEach((btn) => btn.classList.remove("side-nav-active"));
 
@@ -157,7 +150,6 @@ const navigation = function () {
       }
       transactionBtns[index].style.backgroundColor = "#16E069";
       transactionBtns[index].style.color = "white";
-      // Update the focusedInputIndex variable
     })
   );
   transactionInputs.forEach((input, index) =>
@@ -243,37 +235,35 @@ const showToast = function (msg) {
     toast.remove();
   }, 4000);
 };
+
 function formatLargeNumber(number) {
-  // Convert the number to a string
-  let numStr = String(number);
-
-  // Determine the length of the string
-  let length = numStr.length;
-
-  // Calculate the number of commas needed
-  let numCommas = Math.floor((length - 1) / 3);
-
-  // Initialize the formatted string
-  let formattedStr = "";
-
-  // Calculate the number of digits after the last comma
-  let lastGroupDigits = length % 3;
-  if (lastGroupDigits === 0) {
-    lastGroupDigits = 3;
+  // Check if the number is a valid number
+  if (isNaN(number)) {
+    return "Invalid Number";
   }
 
-  // Add the digits after the last comma
-  formattedStr += numStr.substr(0, lastGroupDigits);
+  // Split the number into integer and decimal parts
+  const parts = String(number).split(".");
+  const integerPart = parts[0];
+  const decimalPart = parts[1] || "";
 
-  // Iterate over the remaining characters and add commas
-  for (let i = lastGroupDigits; i < length; i++) {
-    if ((i - lastGroupDigits) % 3 === 0) {
-      formattedStr += ",";
+  // Format the integer part with commas
+  let formattedInteger = "";
+  for (let i = integerPart.length - 1, j = 0; i >= 0; i--) {
+    formattedInteger = integerPart[i] + formattedInteger;
+    j++;
+    if (j % 3 === 0 && i !== 0) {
+      formattedInteger = "," + formattedInteger;
     }
-    formattedStr += numStr[i];
   }
 
-  return formattedStr;
+  // Combine the formatted integer and decimal parts
+  let formattedNumber = formattedInteger;
+  if (decimalPart) {
+    formattedNumber += "." + decimalPart;
+  }
+
+  return formattedNumber;
 }
 
 // ============================LOGIN=========================================================
@@ -290,261 +280,508 @@ const closeLogin = function () {
 
 profileIcon.addEventListener("click", closeLogin);
 document.querySelector(".close-img").addEventListener("click", closeLogin);
+// validate function
+function validateForm(email, passWord) {
+  let valid = true;
+  if (!passWord) {
+    errorMsgPassword.style.display = "block";
+    errorMsgPassword.textContent = "Password Field is Empty";
+    inputLoginPassword.style.border = "1px solid #FF0000";
+    valid = false;
+  } else {
+    errorMsgPassword.style.display = "none";
+    inputLoginPassword.style.border = "none";
+  }
+  if (!email) {
+    errorMsgemail.style.display = "block";
+    errorMsgemail.textContent = "Email Can't Be Blank";
+    inputLoginEmail.style.border = "1px solid #FF0000";
+    valid = false;
+  } else {
+    errorMsgemail.style.display = "none";
+    inputLoginEmail.style.border = "none";
+  }
+
+  return valid;
+}
 
 // let currentAccount;
 loginBtn.addEventListener("click", function (e) {
   navigation();
   togglePages(0);
   e.preventDefault();
+  if (validateForm(inputLoginEmail.value, inputLoginPassword.value)) {
+    signInWithEmailAndPassword(
+      auth,
+      inputLoginEmail.value,
+      inputLoginPassword.value
+    ).catch((error) => {
+      console.log(error.code);
+      if (error.code.includes("auth/network-request-failed")) {
+        return showToast(
+          `<i class="fa-solid fa-circle-exclamation"></i> <p class="toast-msg">Check Your Network Connection</p>`
+        );
+      }
 
-  currentAccount = accounts.find((acc) => {
-    return acc.email === inputLoginEmail.value.toLowerCase();
-  });
-  // console.log(currentAccount);
-  if (
-    !currentAccount ||
-    currentAccount.pin != Number(inputLoginPassword.value)
-  ) {
-    showToast(
-      `<i class="fa-solid fa-circle-exclamation"></i> <p class="toast-msg">Wrong Email or Password</p>`
-    );
-    inputLoginEmail.style.border = "1px solid #FF0000";
-    inputLoginPassword.style.border = "1px solid #FF0000";
-    inputLoginEmail.style.color = "#FF0000";
-    inputLoginPassword.style.color = "#FF0000";
+      if (error.code.includes("auth/invalid-email")) {
+        errorMsgemail.style.display = "block";
+        errorMsgemail.textContent = "Email is invalid";
+        inputLoginEmail.style.border = "1px solid #FF0000";
+        return;
+      } else {
+        errorMsgemail.style.display = "none";
+        inputLoginEmail.style.border = "none";
+      }
+      if (error.code.includes("auth/user-not-found")) {
+        // errorMsgemail.style.display = "block";
+        showToast(
+          `<i class="fa-solid fa-circle-exclamation"></i> <p class="toast-msg">User Not Found</p>`
+        );
+        // errorMsgemail.textContent = "Email is invalid";
+        inputLoginEmail.style.border = "1px solid #FF0000";
+        return;
+      } else {
+        errorMsgemail.style.display = "none";
+        inputLoginEmail.style.border = "none";
+      }
+    });
   }
-  // console.log(Number(inputLoginPassword.value), currentAccount.pin);
-  if (currentAccount.pin === Number(inputLoginPassword.value)) {
-    // console.log(currentAccount);
-    // console.log(currentAccount.pin);
-    // const accountNumber = (Date.now() + "").slice(-10);
-    // currentAccount.accountNumber = accountNumber;
-    userNAme.textContent = currentAccount.owner.split(" ")[0];
-    fundAccountNumber.textContent = currentAccount.accountNumber;
-    accountNumberValue.textContent = currentAccount.accountNumber;
-    closeLogin();
-    displayTransaction(currentAccount);
-    printBalance(currentAccount);
-    calcDisplaySummary(currentAccount);
-    dateTxt.textContent = getFormattedDate(today);
-    // closeLogin();
-    mainSection.style.display = "flex";
-  }
+
+  // }
 });
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    dateTxt.textContent = getFormattedDate(today);
+    //   // closeLogin();
+    setTimeout(() => {
+      mainSection.style.display = "flex";
+    }, 2000);
+    if (loginModal.classList != "hidden") {
+      loginModal.classList.add("hidden");
+      overlay.classList.add("hidden");
+    } else {
+      console.log("modal not hidded");
+    }
+    logOutBtn.style.display = "block";
+    // loginModal.style.display = "none";
+    loginBtn.style.display = "none";
+    inputLoginPassword.style.display = "none";
+    inputLoginEmail.style.display = "none";
 
-// sumary
-const updateUi = function (acc) {
-  // displayMovement
-  displayTransaction(acc);
+    modalDes.style.display = "none";
+    modalHead.textContent = "Logout";
+    // transfer functionality
+    sendMoneyBtn.addEventListener("click", function (e) {
+      e.preventDefault();
 
-  // displaybalance
-  printBalance(acc);
+      const recipientAccNumber = Number(recipientAccountNumber.value);
+      const transferAmount = Number(transferInput.value);
+      // Create a reference to the 'users' collection
+      const usersRef = collection(db, "users");
 
-  // display summary
-  calcDisplaySummary(acc);
-};
+      // Query the database for the user with the given account number
+      const recipientQuery = query(
+        usersRef,
+        where("accountNumber", "==", recipientAccNumber)
+      );
+      const currentUserDocRef = doc(db, "users", user.uid);
 
-const calcDisplaySummary = function (acc) {
-  // TOTAL DEPOSIT
+      getDoc(currentUserDocRef).then((userDocSnapshot) => {
+        const userAccountNumber = userDocSnapshot.data().accountNumber;
+        const userAccount = userDocSnapshot.data();
 
-  const totalDeposit = acc.transactions
-    .filter((mov) => {
-      return mov > 0;
-    })
-    .reduce((acm, curr) => acm + curr, 0);
-  acc.totalDeposit = totalDeposit;
-  incomePrice.textContent = `${formatLargeNumber(totalDeposit)}`;
+        // Check if the recipient account number is the same as the user's account number
 
-  // TOTAL WITHDRAWAL
+        if (userAccount.balance < 1) {
+          return showToast(
+            `<i class="fa-solid fa-circle-exclamation"></i> <p class="toast-msg">You Don't have Sufficient Balance To Execute This Transaction, Fund Account and Try Again</p>`
+          );
+        }
 
-  const totalWithdrawal = acc.transactions
-    .filter((mov) => {
-      return mov < 0;
-    })
-    .reduce((acm, curr) => acm + curr, 0);
+        if (userAccount.balance < transferAmount) {
+          return showToast(
+            `<i class="fa-solid fa-circle-exclamation"></i> <p class="toast-msg">Amount Cant Be Higher Than Current Balance:₦${formatLargeNumber(
+              userAccount.balance
+            )}.</p>`
+          );
+        }
+        if (recipientAccNumber === userAccountNumber) {
+          return showToast(
+            `<i class="fa-solid fa-circle-exclamation"></i> <p class="toast-msg">Cannot send money to your own account.</p>`
+          );
+        }
+        getDocs(recipientQuery).then((recipientSnapshot) => {
+          if (!recipientSnapshot.empty) {
+            const recipientDoc = recipientSnapshot.docs[0];
+            const recipientData = recipientDoc.data();
+            console.log(recipientData);
+            const recipientDocRef = doc(db, "users", recipientDoc.id);
 
-  outcomePrice.textContent = `${formatLargeNumber(Math.abs(totalWithdrawal))}`;
-
-  // INTEREST
-
-  // const interestRate = acc.interestRate / 100;
-  // const interest = acc.movements
-  //   .filter(mov => mov > 0)
-  //   .map(mov => mov * interestRate)
-  //   .filter(int => int >= 1)
-  //   .reduce((acm, curr) => acm + curr, 0);
-  // labelSumInterest.textContent = `${interest}€`;
-};
-
-// updating transaction history
-
-const displayTransaction = function (acc, sort = false) {
-  transactionHistoryCont.innerHTML = "";
-  const movs = sort
-    ? acc.transactions.slice().sort((a, b) => a - b)
-    : acc.transactions;
-  movs.forEach((mov, i) => {
-    const type = mov > 0 ? "deposit" : "withdrawal";
-    const otherPartyAccount = accounts.find((a) =>
-      a.transactions.includes(-mov)
-    );
-    const otherPartyName = otherPartyAccount
-      ? otherPartyAccount.owner
-      : "Admin";
-
-    const html = `
-      <div class="transaction__row">
-        <div class="transaction--type transaction--type__${type}">
-          <p class="message">${type === "deposit" ? "Received" : "Sent"}
-             Money ${type === "deposit" ? "from" : "to"}
-            <span class="source">${otherPartyName}</span>
-          </p>
-          <div class="transaction--date">3 days ago</div>
-        </div>
-        <div class="transaction-value value-type-${type}">
-        ₦${formatLargeNumber(Math.abs(mov))}
-        </div>
+            if (transferAmount < 1) {
+              return showToast(
+                `<i class="fa-solid fa-circle-exclamation"></i> <p class="toast-msg">Please Enter A Valid Amount</p>`
+              );
+            }
+            // Update recipient's transactions array
+            const confirmationCont = `<div class="confirmation-container">
+        <h3 class="confirmation-heading">Transfer</h3>
+        <p class="confirm-txt">Confirm Transction Details Below</p>
+        <div class="transfer-details-cont">
+      <div class="detail-row">
+        <p class="detail-title">Account Number</p>
+        <p class="detail">${recipientAccountNumber.value}</p>
       </div>
-    `;
+      <div class="detail-row">
+        <p class="detail-title">Recipient Name</p>
+        <p class="detail">${recipientData.owner}</p>
+      </div>
+      <div class="detail-row">
+        <p class="detail-title">Amount</p>
+        <p class="detail">₦${formatLargeNumber(transferAmount)}</p>
+      </div>
+        </div>
+        <button class="btn-confirm">Confirm</button>
+      </div>`;
+            pushNotification.insertAdjacentHTML("afterbegin", confirmationCont);
+            pushNotification.style.display = "flex";
+            const confirmButton = document.querySelector(".btn-confirm");
+            confirmButton.addEventListener("click", function () {
+              updateDoc(recipientDocRef, {
+                transactions: arrayUnion(transferAmount),
+              })
+                .then(() => {
+                  // Update sender's transactions array (deducting the transferred amount)
+                  const senderDocRef = doc(db, "users", user.uid);
+                  updateDoc(senderDocRef, {
+                    transactions: arrayUnion(-transferAmount),
+                  })
+                    .then(() => {
+                      document.querySelector(
+                        ".confirmation-container"
+                      ).style.display = "none";
+                      document.querySelector(
+                        ".push-notificstion"
+                      ).style.display = "block";
 
-    transactionHistoryCont.insertAdjacentHTML("afterbegin", html);
+                      pushMsg.textContent = `₦${formatLargeNumber(
+                        transferAmount
+                      )} sent to ${recipientData.owner}`;
+                      setTimeout(() => {
+                        document.querySelector(
+                          ".push-notificstion"
+                        ).style.display = "none";
+                        pushNotification.style.display = "none";
+                        pushMsg.textContent = "";
+                      }, 3000);
+                      transferInput.value = "";
+                      recipientAccountNumber.value = "";
+                    })
+                    .catch((error) => {
+                      // Handle error while updating sender's data
+                    });
+                })
+                .catch((error) => {
+                  // Handle error while updating recipient's data
+                });
+            });
+          } else {
+            // Recipient account not found
+            showToast("Recipient account not found.");
+          }
+        });
+      });
+    });
+
+    // loan functionality
+    loanBtn.addEventListener("click", function (e) {
+      e.preventDefault();
+      const amount = Number(loanInput.value);
+
+      const colRef = collection(db, "users");
+      const docRef = doc(colRef, user.uid);
+      getDoc(docRef).then((doc) => {
+        const currentAccount = doc.data();
+        if (amount < 1) {
+          return showToast(
+            `<i class="fa-solid fa-circle-exclamation"></i><p class="toast-msg"> Amount can't be less than 1</p>`
+          );
+        }
+        if (currentAccount.totalDeposit === 0) {
+          return showToast(
+            `<i class="fa-solid fa-circle-exclamation"></i><p class="toast-msg"> You Are Not Eligible for a Loan, Make Deposits To Qualify</p>`
+          );
+        }
+        if (amount > currentAccount.totalDeposit) {
+          return showToast(
+            `<i class="fa-solid fa-circle-exclamation"></i> <p class="toast-msg">Your loan amount is higher than your total deposit, try amount less than ₦${formatLargeNumber(
+              currentAccount.totalDeposit
+            )}</p>`
+          );
+        }
+        if (amount > currentAccount.totalDeposit * 0.2) {
+          return showToast(
+            `<i class="fa-solid fa-circle-exclamation"></i> <p class="toast-msg">Amount is higher than your eligibility limt, you can only borrow 20% of your total deposit ₦${formatLargeNumber(
+              currentAccount.totalDeposit * 0.2
+            )}</p>`
+          );
+        }
+
+        if (
+          amount > 0 &&
+          currentAccount.transactions.some((mov) => mov >= amount * 0.1) //&&
+          // amount < currentAccount.totalDeposit
+        ) {
+          setTimeout(() => {
+            pushNotification.style.display = "flex";
+            document.querySelector(".push-notificstion").style.display =
+              "block";
+
+            pushMsg.textContent = `Your loan request of ₦${formatLargeNumber(
+              amount
+            )} was succesful`;
+          }, 500);
+
+          setTimeout(() => {
+            document.querySelector(".push-notificstion").style.display = "none";
+            pushNotification.style.display = "none";
+            pushMsg.textContent = "";
+          }, 5000);
+          loanInput.value = "";
+
+          setTimeout(() => {
+            updateDoc(docRef, {
+              transactions: arrayUnion(amount),
+            });
+          }, 1000);
+        }
+      });
+    });
+
+    const colRef = collection(db, "users");
+    const docRef = doc(colRef, user.uid);
+    onSnapshot(docRef, (doc) => {
+      // logout functionality
+
+      if (doc.exists()) {
+        // console.log(doc, user.uid);
+        displayTransaction(user);
+
+        // displaybalance
+
+        printBalance(user);
+
+        // display summary
+        calcDisplaySummary(user);
+
+        const detail = doc.data();
+
+        userNAme.textContent = detail.owner.split(" ")[0];
+        fundAccountNumber.textContent = detail.accountNumber;
+        accountNumberValue.textContent = detail.accountNumber;
+
+        // closeLogin();
+
+        dateTxt.textContent = getFormattedDate(today);
+        // closeLogin();
+        mainSection.style.display = "flex";
+      }
+    });
+  } else {
+    mainSection.style.display = "none";
+    loginBtn.style.display = "block";
+    inputLoginPassword.style.display = "block";
+    inputLoginEmail.value = "";
+    inputLoginPassword.value = "";
+    inputLoginEmail.style.display = "block";
+
+    modalDes.style.display = "block";
+    modalHead.textContent = "Login";
+    logOutBtn.style.display = "none";
+    userNAme.textContent = "";
+    fundAccountNumber.textContent = "";
+    accountNumberValue.textContent = "";
+
+    // closeLogin();
+
+    dateTxt.textContent = getFormattedDate(today);
+  }
+  logOutBtn.addEventListener("click", function (e) {
+    e.preventDefault();
+    signOut(auth);
+    location.reload();
+    console.log("user logged out");
+  });
+  // calcDisplaySummary(user);
+  notificationIcon.forEach((icon) => {
+    icon.addEventListener("click", function () {
+      toggleNotification();
+      displayNotification(user);
+    });
+  });
+});
+// ===========================================DISPLAY TRANSACTION HISTORY==================================================
+// displayMovement
+const displayTransaction = function (user, sort = false) {
+  const colRef = collection(db, "users");
+  console.log(colRef);
+  const docRef = doc(colRef, user.uid);
+  getDoc(docRef).then((doc) => {
+    transactionHistoryCont.innerHTML = "";
+    const transactions = doc.data().transactions;
+    const balance = transactions.reduce((acm, cur) => acm + cur, 0);
+    const totalDeposit = transactions
+      .filter((mov) => {
+        return mov > 0;
+      })
+      .reduce((acm, curr) => acm + curr, 0);
+
+    updateDoc(docRef, { balance: balance, totalDeposit: totalDeposit });
+    const movs = sort
+      ? acc.transactions.slice().sort((a, b) => a - b)
+      : doc.data().transactions;
+    movs.forEach((mov, i) => {
+      const type = mov > 0 ? "deposit" : "withdrawal";
+      const otherPartyAccountPromise = findOtherPartyAccount(mov);
+      // other party details
+
+      otherPartyAccountPromise.then((otherPartyAccount) => {
+        const otherPartyName = otherPartyAccount
+          ? otherPartyAccount.owner
+          : "Admin";
+
+        const html = `
+    <div class="transaction__row">
+      <div class="transaction--type transaction--type__${type}">
+        <p class="message">${type === "deposit" ? "Received" : "Sent"}
+           Money ${type === "deposit" ? "from" : "to"}
+          <span class="source">${otherPartyName}</span>
+        </p>
+         <!--<div class="transaction--date">3 days ago</div>-->
+      </div>
+      <div class="transaction-value value-type-${type}">
+      ₦${formatLargeNumber(Math.abs(mov))}
+      </div>
+    </div>
+  `;
+
+        transactionHistoryCont.insertAdjacentHTML("afterbegin", html);
+      });
+    });
+  });
+};
+// =================================PRINTBALANCE============================
+// print balance
+const printBalance = function (user) {
+  const colRef = collection(db, "users");
+  const docRef = doc(colRef, user.uid);
+  getDoc(docRef).then((doc) => {
+    const balance = doc.data().transactions.reduce((acm, cur) => {
+      return acm + cur;
+    }, 0);
+    doc.data().balance = balance;
+    labelBalance.textContent = `${formatLargeNumber(balance)}`;
+  });
+};
+// ===========================================================DISPLAY SUMMARY================================
+const calcDisplaySummary = function (user) {
+  // TOTAL DEPOSIT
+  const colRef = collection(db, "users");
+  const docRef = doc(colRef, user.uid);
+  getDoc(docRef).then((doc) => {
+    // total deposit
+    const totalDeposit = doc
+      .data()
+      .transactions.filter((mov) => {
+        return mov > 0;
+      })
+      .reduce((acm, curr) => acm + curr, 0);
+    doc.data().totalDeposit = totalDeposit;
+    incomePrice.textContent = `${formatLargeNumber(totalDeposit)}`;
+
+    // TOTAL WITHDRAWAL
+
+    const totalWithdrawal = doc
+      .data()
+      .transactions.filter((mov) => {
+        return mov < 0;
+      })
+      .reduce((acm, curr) => acm + curr, 0);
+
+    outcomePrice.textContent = `${formatLargeNumber(
+      Math.abs(totalWithdrawal)
+    )}`;
   });
 };
 
-// display notification functionality
+// Function to find the other party's account in Firestore based on the transaction amount
+const findOtherPartyAccount = (transactionAmount) => {
+  const colRef = collection(db, "users");
+  const refQuery = query(
+    colRef,
+    where("transactions", "array-contains", -transactionAmount)
+  );
 
-const displayNotification = function (acc, sort = false) {
-  notificationContainer2.innerHTML = "";
-  const movs = sort
-    ? acc.transactions.slice().sort((a, b) => a - b)
-    : acc.transactions;
-  movs.forEach((mov, i) => {
-    const type = mov > 0 ? "deposit" : "withdrawal";
-    const otherPartyAccount = accounts.find((a) =>
-      a.transactions.includes(-mov)
-    );
-    const otherPartyName = otherPartyAccount
-      ? otherPartyAccount.owner
-      : "Admin";
+  return getDocs(refQuery)
+    .then((querySnapshot) => {
+      if (!querySnapshot.empty) {
+        const otherPartyAccount = querySnapshot.docs[0].data();
+        return otherPartyAccount;
+      } else {
+        return null;
+      }
+    })
+    .catch((error) => {
+      console.error("Error finding other party's account:", error);
+      return null;
+    });
+};
+const displayNotification = function (user, sort = false) {
+  const colRef = collection(db, "users");
+  const docRef = doc(colRef, user.uid);
+  getDoc(docRef).then((doc) => {
+    notificationContainer2.innerHTML = "";
+    const movs = sort
+      ? doc
+          .data()
+          .transactions.slice()
+          .sort((a, b) => a - b)
+      : doc.data().transactions;
+    movs.forEach((mov, i) => {
+      const type = mov > 0 ? "deposit" : "withdrawal";
 
-    const html = `
-     <div class="notification-div">
-     
+      // Find the other party's account in Firestore based on the transaction amount
+      const otherPartyAccountPromise = findOtherPartyAccount(mov);
+
+      // Use Promise to wait for the other party's account to be found
+      otherPartyAccountPromise.then((otherPartyAccount) => {
+        const otherPartyName = otherPartyAccount
+          ? otherPartyAccount.owner
+          : "Admin";
+
+        const html = `
+          <div class="notification-div">
             <div class="notification-thmb notification-thmb--${type}"></div>
             <div class="notification-msg-cont">
               <p class="notification-msg">
                 ${type === "deposit" ? "you" : "Your"} ${
-      type === "deposit" ? "received" : "transfer"
-    } ${
-      type === "deposit" ? "" : "of"
-    } ₦<span class="msg-amount">${formatLargeNumber(Math.abs(mov))}.00</span> ${
-      type === "deposit" ? "from" : "to"
-    }
+          type === "deposit" ? "received" : "transfer"
+        } ${
+          type === "deposit" ? "" : "of"
+        } ₦<span class="msg-amount">${formatLargeNumber(
+          Math.abs(mov)
+        )}.00</span> ${type === "deposit" ? "from" : "to"}
                 <span class="notification-source">${otherPartyName}</span>
-                ${type === "deposit" ? "Successfully" : "was successfull"}
+                ${type === "deposit" ? "Successfully" : "was successful"}
               </p>
-              <p class="notification-time">1:20pm</p>
             </div>
-           
           </div>
-    `;
+        `;
 
-    notificationContainer2.insertAdjacentHTML("afterbegin", html);
+        notificationContainer2.insertAdjacentHTML("afterbegin", html);
+      });
+    });
   });
 };
-
-// print balance
-const printBalance = function (acc) {
-  const balance = acc.transactions.reduce((acm, cur) => {
-    return acm + cur;
-  }, 0);
-  acc.balance = balance;
-  labelBalance.textContent = `${formatLargeNumber(acc.balance)}`;
-};
-
-sendMoneyBtn.addEventListener("click", function (e) {
-  e.preventDefault();
-  const receiverAcnt = accounts.find(
-    (acc) => acc.accountNumber === Number(recipientAccountNumber.value)
-  );
-
-  const amount = Number(transferInput.value);
-  if (!receiverAcnt) {
-    return showToast(
-      `<i class="fa-solid fa-circle-exclamation"></i><p class="toast-msg"> Recipient Account Number Does Not Exist, Check Account Number and Try Again</p>`
-    );
-  }
-  if (receiverAcnt) {
-    if (amount < 1) {
-      return showToast(
-        `<i class="fa-solid fa-circle-exclamation"></i> <p class="toast-msg">Please Enter A Valid Amount</p>`
-      );
-    }
-    if (currentAccount.balance < 1 || currentAccount.balance < amount) {
-      return showToast(
-        `<i class="fa-solid fa-circle-exclamation"></i> <p class="toast-msg">You Don't have Sufficient Balance To Execute This Transaction, Fund Account and Try Again</p>`
-      );
-    }
-    if (receiverAcnt.accountNumber === currentAccount.accountNumber) {
-      return showToast(
-        `<i class="fa-solid fa-circle-exclamation"></i> <p class="toast-msg">You can not send money to your own account</p>`
-      );
-    }
-    if (
-      amount > 0 &&
-      currentAccount.balance > 0 &&
-      currentAccount.balance >= amount &&
-      receiverAcnt.accountNumber !== currentAccount.accountNumber
-    ) {
-      const confirmationCont = `<div class="confirmation-container">
-      <h3 class="confirmation-heading">Transfer</h3>
-      <p class="confirm-txt">Confirm Transction Details Below</p>
-      <div class="transfer-details-cont">
-    <div class="detail-row">
-      <p class="detail-title">Account Number</p>
-      <p class="detail">${recipientAccountNumber.value}</p>
-    </div>
-    <div class="detail-row">
-      <p class="detail-title">Recipient Name</p>
-      <p class="detail">${receiverAcnt.owner}</p>
-    </div>
-    <div class="detail-row">
-      <p class="detail-title">Amount</p>
-      <p class="detail">₦${formatLargeNumber(amount)}</p>
-    </div>
-      </div>
-      <button class="btn-confirm">Confirm</button>
-    </div>`;
-      pushNotification.insertAdjacentHTML("afterbegin", confirmationCont);
-      pushNotification.style.display = "flex";
-      const confirmButton = document.querySelector(".btn-confirm");
-      confirmButton.addEventListener("click", function () {
-        currentAccount.transactions.push(-amount);
-        receiverAcnt.transactions.push(amount);
-
-        updateUi(currentAccount);
-        displayNotification(currentAccount);
-        document.querySelector(".confirmation-container").style.display =
-          "none";
-        document.querySelector(".push-notificstion").style.display = "block";
-
-        pushMsg.textContent = `₦${formatLargeNumber(amount)} sent to ${
-          receiverAcnt.owner
-        }`;
-        // Set a timeout to hide the push notification after 6 seconds
-        setTimeout(() => {
-          document.querySelector(".push-notificstion").style.display = "none";
-          pushNotification.style.display = "none";
-          pushMsg.textContent = "";
-        }, 3000);
-        localStorage.setItem("accounts", JSON.stringify(accounts));
-      });
-    }
-
-    transferInput.value = "";
-    recipientAccountNumber.value = "";
-  }
-});
 
 // copy functionality
 
@@ -569,92 +806,11 @@ copyBtn.addEventListener("click", function () {
   document.body.removeChild(tempInput);
 });
 
-// loan functionality
-
-loanBtn.addEventListener("click", function (e) {
-  e.preventDefault();
-  const amount = Number(loanInput.value);
-  if (currentAccount.totalDeposit === 0) {
-    return showToast(
-      `<i class="fa-solid fa-circle-exclamation"></i><p class="toast-msg"> You Are Not Eligible for a Loan, Make Deposits To Qualify</p>`
-    );
-  }
-  if (amount < 1) {
-    return showToast(
-      `<i class="fa-solid fa-circle-exclamation"></i><p class="toast-msg"> Amount can't be less than 1</p>`
-    );
-  }
-  if (amount > currentAccount.totalDeposit) {
-    return showToast(
-      `<i class="fa-solid fa-circle-exclamation"></i> <p class="toast-msg">Your loan amount is higher than your total deposit, try amount less than ₦${formatLargeNumber(
-        currentAccount.totalDeposit
-      )}</p>`
-    );
-  }
-  if (amount > currentAccount.totalDeposit * 0.2) {
-    return showToast(
-      `<i class="fa-solid fa-circle-exclamation"></i> <p class="toast-msg">Amount is higher than your eligibility limt, you can only borrow 20% of your total deposit ₦${formatLargeNumber(
-        currentAccount.totalDeposit * 0.2
-      )}</p>`
-    );
-  }
-  if (
-    amount > 0 &&
-    currentAccount.transactions.some((mov) => mov >= amount * 0.1) &&
-    amount < currentAccount.totalDeposit
-  ) {
-    setTimeout(() => {
-      // inputLoanAmount.value = "";
-      // document.querySelector(".confirmation-container").style.display = "none";
-      pushNotification.style.display = "flex";
-      document.querySelector(".push-notificstion").style.display = "block";
-
-      pushMsg.textContent = `Your loan request of ₦${formatLargeNumber(
-        amount
-      )} was succesful`;
-      localStorage.setItem("accounts", JSON.stringify(accounts));
-    }, 500);
-
-    setTimeout(() => {
-      document.querySelector(".push-notificstion").style.display = "none";
-      pushNotification.style.display = "none";
-      pushMsg.textContent = "";
-    }, 5000);
-    loanInput.value = "";
-
-    setTimeout(() => {
-      currentAccount.transactions.push(amount);
-
-      updateUi(currentAccount);
-      localStorage.setItem("accounts", JSON.stringify(accounts));
-    }, 8000);
-  }
-});
-
 // ===================================================NOTIFICATION FUNCTIONALITY=============================================================
-notificationIcon.forEach((icon) => {
-  icon.addEventListener("click", function () {
-    toggleNotification();
-    displayNotification(currentAccount);
-  });
-});
+
 overlay.addEventListener("click", toggleNotification);
 
 // ====================================================APP FUNCTIONALITY=============================================================================================================
-
-class account {
-  #accountNumber = (Date.now() + "").slice(-10);
-  #emailAddress;
-  #passWord;
-
-  constructor(emailAddress, firstName, Lastname, passWord) {
-    this.#emailAddress = emailAddress;
-
-    this.firstName = firstName;
-    this.Lastname = Lastname;
-    this.#passWord = passWord;
-  }
-}
 
 // ================================================================= ALL FUNCTIONS ========================================================================
 navigation();

@@ -46,6 +46,9 @@ input:focus {
   padding-top: 5rem;
   display: none;
 }
+.login-out {
+  display: none;
+}
 .side-bar {
   padding-top: 2rem;
   padding-right: 1rem;
@@ -686,6 +689,13 @@ svg {
   width: 100%;
   height: 5px;
   animation: anim 4s linear forwards;
+}
+.error-msg-email,
+.error-msg-firstname,
+.error-msg-lastname,
+.error-msg-password {
+  color: #fa2a2a;
+  display: none;
 }
 @keyframes anim {
   100% {

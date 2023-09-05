@@ -197,7 +197,7 @@
       <p class="modal-desc">
         Dive into the world financial freedom and seamless transactions
       </p>
-      <form class="modal__form">
+      <form class="modal__form sign-up-form">
         <input type="email" placeholder="Email Address" class="sign-up-email" />
 
         <div class="error-msg-email">error message</div>
@@ -229,7 +229,7 @@
       </div>
       <h2 class="modal__header">Login</h2>
       <p class="modal-desc">Welcome Back Login and explore</p>
-      <form class="modal__form">
+      <form class="modal__form sign-in-form">
         <input type="email" class="login-email" placeholder="Email Address" />
 
         <input
@@ -246,7 +246,19 @@
     <!-- ... other head content ... -->
 
     <!-- Include data.js script -->
-    <script type="module" src="data.js"></script>
+    <!-- Add these scripts in your HTML file -->
+    <script
+      src="https://www.gstatic.com/firebasejs/10.2.0/firebase-app.js"
+      type="module"
+    ></script>
+    <script
+      src="https://www.gstatic.com/firebasejs/10.2.0/firebase-auth.js"
+      type="module"
+    ></script>
+    <script
+      src="https://www.gstatic.com/firebasejs/10.2.0/firebase-database.js"
+      type="module"
+    ></script>
 
     <!-- Include index.js script -->
     <script type="module" src="index.js"></script>
