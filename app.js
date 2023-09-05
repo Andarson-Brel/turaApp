@@ -563,8 +563,6 @@ onAuthStateChanged(auth, (user) => {
     const colRef = collection(db, "users");
     const docRef = doc(colRef, user.uid);
     onSnapshot(docRef, (doc) => {
-      // logout functionality
-
       if (doc.exists()) {
         // console.log(doc, user.uid);
         displayTransaction(user);
@@ -625,10 +623,11 @@ onAuthStateChanged(auth, (user) => {
 // ===========================================DISPLAY TRANSACTION HISTORY==================================================
 // displayMovement
 const displayTransaction = function (user, sort = false) {
+  transactionHistoryCont.innerHTML = "";
+
   const colRef = collection(db, "users");
   const docRef = doc(colRef, user.uid);
   getDoc(docRef).then((doc) => {
-    notificationContainer2.innerHTML = "";
     const movs = sort
       ? doc
           .data()
