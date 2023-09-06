@@ -65,6 +65,9 @@ const copyBtn = document.querySelector(".copy-btn");
 const errorMsgemail = document.querySelector(".error-msg-email");
 const errorMsgPassword = document.querySelector(".error-msg-password");
 const bottomNav = document.querySelector(".botton-nav");
+const loginPassword = document.getElementById("login-password");
+const checkboxPass = document.querySelector(".checkboxpass");
+const checkboxCont = document.querySelector(".checkboxcont");
 const btmNavItem = document.querySelectorAll(".btm-nav-item");
 const btmIconInactive = document.querySelectorAll(`.btm-nav-img`);
 const btmIconActive = document.querySelectorAll(".btm-nav-img-active");
@@ -359,13 +362,12 @@ onAuthStateChanged(auth, (user) => {
     if (loginModal.classList != "hidden") {
       loginModal.classList.add("hidden");
       overlay.classList.add("hidden");
-    } else {
-      console.log("modal not hidded");
     }
     logOutBtn.style.display = "block";
     // loginModal.style.display = "none";
     loginBtn.style.display = "none";
     inputLoginPassword.style.display = "none";
+    checkboxCont.style.display = "none";
     inputLoginEmail.style.display = "none";
 
     modalDes.style.display = "none";
@@ -610,7 +612,7 @@ onAuthStateChanged(auth, (user) => {
     e.preventDefault();
     signOut(auth);
     location.reload();
-    console.log("user logged out");
+    // console.log("user logged out");
   });
   // calcDisplaySummary(user);
   notificationIcon.forEach((icon) => {
@@ -620,6 +622,14 @@ onAuthStateChanged(auth, (user) => {
     });
   });
 });
+function showPassword() {
+  if (loginPassword.type === "password") {
+    loginPassword.type = "text";
+  } else {
+    loginPassword.type = "password";
+  }
+}
+checkboxPass.addEventListener("click", showPassword);
 // ===========================================DISPLAY TRANSACTION HISTORY==================================================
 // displayMovement
 const displayTransaction = function (user, sort = false) {

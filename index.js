@@ -47,6 +47,8 @@ const signupSubmit = document.querySelector(".sign-up-submit");
 const closeModalicon = document.querySelectorAll(".close-img");
 const loginSpan = document.querySelector(".loginst-span");
 const signUpform = document.querySelector(".sign-up-form");
+const createPassword = document.getElementById("create-password");
+const verifyPasswordInput = document.getElementById("verify-password");
 ////////////////////////////////// // Get references to all input fields and error message elements
 /////////////////////////////////////
 const inputSignupEmail = document.querySelector(".sign-up-email");
@@ -55,6 +57,7 @@ const inputLastName = document.querySelector(".last-name");
 const inputSignupPassword = document.querySelector(".sign-up-password");
 const inputLoginEmail = document.querySelector(".login-email");
 const inputLoginPassword = document.querySelector(".login-password");
+const checkboxPass = document.querySelector(".checkboxpass");
 //////////////////////////////// containers/////////////////////////////
 const signupModal = document.querySelector(".sign-up");
 const loginModal = document.querySelector(".login");
@@ -108,20 +111,44 @@ document.addEventListener("keydown", function (e) {
 
 //================================================== form validation============================================
 //
-function validateForm(email, passWord, firstName, lastName) {
+function validateForm(email, passWord, verifyPassword, firstName, lastName) {
   let valid = true;
-  if (!passWord) {
+  if (passWord != verifyPassword) {
+    // console.log("failed");
+    errorMsgPassword.style.display = "block";
+    errorMsgPassword.textContent = "Your Password Doesn't Match";
+    verifyPasswordInput.style.border = "1px solid #FF0000";
+    inputSignupPassword.style.border = "1px solid #FF0000";
+    valid = false;
+  } else if (!passWord && !verifyPassword) {
+    errorMsgPassword.style.display = "block";
+    errorMsgPassword.textContent = "Password Field is Empty";
+    verifyPasswordInput.style.border = "1px solid #FF0000";
+    inputSignupPassword.style.border = "1px solid #FF0000";
+    valid = false;
+  } else if (!passWord && verifyPassword) {
     errorMsgPassword.style.display = "block";
     errorMsgPassword.textContent = "Password Field is Empty";
     inputSignupPassword.style.border = "1px solid #FF0000";
-  } else {
-    errorMsgPassword.style.display = "none";
+
+    verifyPasswordInput.style.border = "none";
+
+    valid = false;
+  }
+  if (!verifyPassword && passWord) {
+    errorMsgPassword.style.display = "block";
+    errorMsgPassword.textContent = "Password Field is Empty";
+    verifyPasswordInput.style.border = "1px solid #FF0000";
+
     inputSignupPassword.style.border = "none";
+
+    valid = false;
   }
   if (!email) {
     errorMsgemail.style.display = "block";
     errorMsgemail.textContent = "Email Can't Be Blank";
     inputSignupEmail.style.border = "1px solid #FF0000";
+    valid = false;
   } else {
     errorMsgemail.style.display = "none";
     inputSignupEmail.style.border = "none";
@@ -147,6 +174,19 @@ function validateForm(email, passWord, firstName, lastName) {
 
   return valid;
 }
+function showPassword() {
+  if (
+    createPassword.type === "password" &&
+    verifyPasswordInput.type === "password"
+  ) {
+    createPassword.type = "text";
+    verifyPasswordInput.type = "text";
+  } else {
+    createPassword.type = "password";
+    verifyPasswordInput.type = "password";
+  }
+}
+checkboxPass.addEventListener("click", showPassword);
 function convertToTitleCase(inputval) {
   var words = inputval.split(" ");
   for (var i = 0; i < words.length; i++) {
@@ -161,9 +201,10 @@ signupSubmit.addEventListener("click", function (e) {
   const firstName = convertToTitleCase(inputFirstName.value);
   const lastName = convertToTitleCase(inputLastName.value);
   const passWord = inputSignupPassword.value;
+  const verifyPassword = verifyPasswordInput.value;
   const owner = `${firstName} ${lastName}`;
   // console.log(owner);
-  if (validateForm(email, passWord, firstName, lastName)) {
+  if (validateForm(email, passWord, verifyPassword, firstName, lastName)) {
     createUserWithEmailAndPassword(auth, email, passWord)
       .then((credential) => {
         const colRef = collection(db, "users");
@@ -177,11 +218,14 @@ signupSubmit.addEventListener("click", function (e) {
           owner: owner,
           accountNumber: Number((Date.now() + "").slice(-10)),
         }).then(() => {
+          window.location.href = "account.html";
+          closeModal();
+
           signUpform.reset();
         });
       })
       .catch((error) => {
-        console.log(error.code);
+        // console.log(error.code);
         if (error.code === "auth/email-already-in-use") {
           errorMsgemail.style.display = "block";
           errorMsgemail.textContent = "Email has already been registered";

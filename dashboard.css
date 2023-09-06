@@ -723,6 +723,16 @@ svg {
 /* .tab-btn.active {
   background-color: #00f262;
 } */
+.checkboxcont {
+  display: flex;
+  width: 20%;
+}
+.checkboxcont input {
+  width: 20%;
+}
+.checkboxlabel {
+  width: 80%;
+}
 /* =============================responsiveness============== */
 @media screen and (max-width: 1000px) {
   .modal {

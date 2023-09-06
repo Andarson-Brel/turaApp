@@ -208,13 +208,25 @@
         <input type="text" class="last-name" placeholder="Last Name" />
 
         <div class="error-msg-lastname">error message</div>
+        
         <input
           type="password"
-          class="sign-up-password"
+          class="sign-up-password" id="create-password"
           placeholder="Create Password"
         />
-
         <div class="error-msg-password">error message</div>
+        <input
+        type="password"
+        class="sign-up-password" id="verify-password"
+        placeholder="Verify Password"
+      />
+<div class="checkboxcont">
+  <input type="checkbox" name="showPassword" class="checkboxpass">
+  <label for="showPassword" class="checkboxlabel">Show Password</label>
+</div>
+      
+      
+        
 
         <button class="btn sign-up-submit">Sign Up</button>
         <p class="loginst">
@@ -222,7 +234,16 @@
         </p>
       </form>
     </div>
+    <div class="push-notificstion-cont">
 
+
+
+      <div class="push-notificstion">
+        <img src="/images/done.gif" alt="" class="msg-icon">
+        <p class="push-notif-msg">Transfer of &#x20A6 500 to John was successful</p>
+      </div>
+
+    </div>
     <div class="modal hidden login">
       <div class="close-cont">
         <img src="/images/close.svg" alt="" class="close-img" />
