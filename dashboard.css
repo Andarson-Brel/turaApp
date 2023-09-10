@@ -766,6 +766,13 @@ svg {
   }
 }
 @media screen and (max-width: 750px) {
+  .checkboxcont {
+    width: 40%;
+  }
+  .checkboxcont .checkboxpass {
+    width: 10%;
+    margin-right: 0.5rem;
+  }
   .transaction-history-section,
   .transaction-history-cont {
     padding: 1rem 0 0;
@@ -997,4 +1004,7 @@ svg {
   /* .toast i {
     font-size: 25px;
   } */
+  .checkboxcont {
+    width: 60%;
+  }
 }
